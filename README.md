@@ -24,7 +24,7 @@ This project is made possible thanks to the APIs provided by Consumet and Inshor
 
 ## License
 
-MIT licensed. See the [LICENSE](https://github.com/YourUsername/NewsFeedSwitcher/blob/main/LICENSE) file for full details.
+MIT licensed. See the [LICENSE](https://github.com/OshekharO/NewsFeedSwitcher/blob/main/LICENSE) file for full details.
 
 ## Author
 

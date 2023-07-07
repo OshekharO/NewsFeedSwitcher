@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>News Feed - Consumet and Inshorts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Include Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+  <style>
+   .news-source {
+    width: 150px;
+    height: 40px;
+    padding-top: 8px;
+    line-height: 40px;
+    border-radius: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.5s ease;
+    color: #ffffff;
+    font-weight: bold;
+    background-color: #dddddd;
+    color: #000000;
+   }
+   .card {
+    height: 100%;
+   }
+   .news-source:hover {
+    background-color: #000000;
+    color: #ffffff;
+   }
+  </style>
+ </head>
+ <body>
+  <div class="container py-3">
+   <!-- Source switcher -->
+   <div class="d-flex justify-content-between mb-3">
+    <div id="ann" class="news-source">
+     <h5>AnimeNews</h5>
+    </div>
+    <div id="inshorts" class="news-source">
+     <h5>Inshorts</h5>
+    </div>
+   </div>
+
+   <!-- Search Bar -->
+   <div class="input-group mb-3">
+    <input type="text" id="searchBar" class="form-control" placeholder="Search News" aria-label="Search News" aria-describedby="searchButton" />
+    <div class="input-group-append">
+     <button class="btn btn-outline-secondary" type="button" id="searchButton">Search</button>
+    </div>
+   </div>
+
+   <!-- News Feed -->
+   <div id="newsFeed" class="row row-cols-1 row-cols-md-2"></div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+    <div class="modal-content">
+     <div class="modal-header">
+      <h5 class="modal-title" id="previewModalLabel">News Preview</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+      </button>
+     </div>
+     <div class="modal-body" id="modalBody"></div>
+     <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      <a id="modalReadMore" href="#" target="_blank" class="btn btn-primary ml-auto">Read More</a>
+      <!-- Read More button moved here -->
+     </div>
+    </div>
+   </div>
+  </div>
+
+  <!-- Include scripts -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+  <script>
+   document.getElementById("ann").addEventListener("click", () => fetchNews("https://api.consumet.org/news/ann/recent-feeds", false));
+   document.getElementById("inshorts").addEventListener("click", () => fetchNews("https://inshorts.me/news/all?offset=0&limit=20", true));
+   document.getElementById("searchButton").addEventListener("click", function () {
+    const query = document.getElementById("searchBar").value;
+    fetchNews(`https://inshorts.me/news/search?query=${query}&offset=0&limit=20`, true);
+   });
+
+   function fetchNews(url, isInshorts) {
+    // Clear existing news feed
+    const newsFeed = document.getElementById("newsFeed");
+    while (newsFeed.firstChild) {
+     newsFeed.removeChild(newsFeed.firstChild);
+    }
+    // Fetch and display news
+    fetch(url)
+     .then((response) => response.json())
+     .then((data) => {
+      const articles = isInshorts ? data.data.articles : data;
+      articles.forEach((item) => {
+       // Create a new div for each news item
+       const newsDiv = document.createElement("div");
+       newsDiv.className = "col mb-4";
+
+       // Create card element for bootstrap
+       const card = document.createElement("div");
+       card.className = "card h-100";
+
+       const thumbnail = document.createElement("img");
+       thumbnail.src = isInshorts ? item.imageUrl : item.thumbnail;
+       thumbnail.className = "card-img-top";
+       thumbnail.loading = "lazy";
+       card.appendChild(thumbnail);
+
+       const cardBody = document.createElement("div");
+       cardBody.className = "card-body";
+
+       // Create and append new elements for the title, topics, and preview
+       const title = document.createElement("h5");
+       title.textContent = item.title;
+       title.className = "card-title";
+       cardBody.appendChild(title);
+
+       if (!isInshorts) {
+        const topics = document.createElement("p");
+        topics.textContent = `Topics: ${item.topics.join(", ")}`;
+        topics.className = "card-text";
+        cardBody.appendChild(topics);
+       }
+
+       const preview = document.createElement("p");
+       preview.textContent = `Preview: ${isInshorts ? item.subtitle : item.preview.intro}`;
+       preview.className = "card-text";
+       cardBody.appendChild(preview);
+
+       const btn = document.createElement("button");
+       btn.textContent = "Read Full Preview";
+       btn.className = "btn btn-primary";
+       btn.setAttribute("data-toggle", "modal");
+       btn.setAttribute("data-target", "#previewModal");
+       btn.onclick = function () {
+        document.getElementById("modalBody").innerText = isInshorts ? item.content : item.preview.full;
+        document.getElementById("modalReadMore").href = isInshorts ? item.sourceUrl : item.url; // Set the Read More button's URL
+       };
+       cardBody.appendChild(btn);
+
+       card.appendChild(cardBody);
+
+       // Append the card to the newsDiv
+       newsDiv.appendChild(card);
+
+       // Append the newsDiv to the newsFeed
+       newsFeed.appendChild(newsDiv);
+      });
+     })
+     .catch((error) => console.error("Error:", error));
+   }
+   // Fetch the initial news feed
+   fetchNews("https://api.consumet.org/news/ann/recent-feeds", false);
+  </script>
+ </body>
+  </html>
+  

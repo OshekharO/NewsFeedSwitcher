@@ -83,7 +83,7 @@
 
    document.getElementById("searchButton").addEventListener("click", function () {
     const query = document.getElementById("searchBar").value;
-    fetchNews(`https://news-api-six-navy.vercel.app/api/news/inshorts?query=${query}`, "inshorts");
+    fetchNews(`https://news-api.cyclic.app/api/newsapi/${query}`, "newsapi");
    });
 
    function fetchNews(url, source) {
@@ -99,6 +99,8 @@
       let articles;
       if (source === "inshorts") {
        articles = data.data.articles;
+      } else if (source === "newsapi") {
+       articles = data.articles;
       } else {
        articles = data;
       }
@@ -113,11 +115,15 @@
 
        // Set image
        const thumbnail = document.createElement("img");
+       let imgSrc;
        if (source === "inshorts") {
-        thumbnail.src = item.imageUrl;
+        imgSrc = item.imageUrl;
+       } else if (source === "newsapi") {
+        imgSrc = item.urlToImage;
        } else {
-        thumbnail.src = item.thumbnail;
+        imgSrc = item.thumbnail;
        }
+       thumbnail.src = imgSrc || "https://www.afidium.com/wp-content/themes/evolve/library/media/images/no-thumbnail.jpg";
        thumbnail.className = "card-img-top";
        thumbnail.loading = "lazy";
        card.appendChild(thumbnail);
@@ -135,6 +141,8 @@
        const preview = document.createElement("p");
        if (source === "inshorts") {
         preview.textContent = `Preview: ${item.subtitle}`;
+       } else if (source === "newsapi") {
+        preview.textContent = `Preview: ${item.description}`;
        } else {
         preview.textContent = `Preview: ${item.preview.intro}`;
        }
@@ -151,6 +159,11 @@
         if (source === "inshorts") {
          document.getElementById("modalBody").innerText = item.content;
          document.getElementById("modalReadMore").href = item.sourceUrl;
+        } else if (source === "newsapi") {
+         const parser = new DOMParser();
+         const parsedHtml = parser.parseFromString(item.content, "text/html");
+         document.getElementById("modalBody").innerText = parsedHtml.body.textContent || "";
+         document.getElementById("modalReadMore").href = item.url;
         } else {
          document.getElementById("modalBody").innerText = item.preview.full;
          document.getElementById("modalReadMore").href = item.url;

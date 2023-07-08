@@ -78,14 +78,15 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
   <script>
-   document.getElementById("ann").addEventListener("click", () => fetchNews("https://api.consumet.org/news/ann/recent-feeds", false));
-   document.getElementById("inshorts").addEventListener("click", () => fetchNews("https://inshorts.me/news/all?offset=0&limit=20", true));
+   document.getElementById("ann").addEventListener("click", () => fetchNews("https://news-api-six-navy.vercel.app/api/news/ann", "ann"));
+   document.getElementById("inshorts").addEventListener("click", () => fetchNews("https://news-api-six-navy.vercel.app/api/news/inshorts", "inshorts"));
+
    document.getElementById("searchButton").addEventListener("click", function () {
     const query = document.getElementById("searchBar").value;
-    fetchNews(`https://inshorts.me/news/search?query=${query}&offset=0&limit=20`, true);
+    fetchNews(`https://news-api-six-navy.vercel.app/api/news/inshorts?query=${query}`, "inshorts");
    });
 
-   function fetchNews(url, isInshorts) {
+   function fetchNews(url, source) {
     // Clear existing news feed
     const newsFeed = document.getElementById("newsFeed");
     while (newsFeed.firstChild) {
@@ -95,7 +96,12 @@
     fetch(url)
      .then((response) => response.json())
      .then((data) => {
-      const articles = isInshorts ? data.data.articles : data;
+      let articles;
+      if (source === "inshorts") {
+       articles = data.data.articles;
+      } else {
+       articles = data;
+      }
       articles.forEach((item) => {
        // Create a new div for each news item
        const newsDiv = document.createElement("div");
@@ -105,8 +111,13 @@
        const card = document.createElement("div");
        card.className = "card h-100";
 
+       // Set image
        const thumbnail = document.createElement("img");
-       thumbnail.src = isInshorts ? item.imageUrl : item.thumbnail;
+       if (source === "inshorts") {
+        thumbnail.src = item.imageUrl;
+       } else {
+        thumbnail.src = item.thumbnail;
+       }
        thumbnail.className = "card-img-top";
        thumbnail.loading = "lazy";
        card.appendChild(thumbnail);
@@ -114,49 +125,48 @@
        const cardBody = document.createElement("div");
        cardBody.className = "card-body";
 
-       // Create and append new elements for the title, topics, and preview
+       // Set title
        const title = document.createElement("h5");
        title.textContent = item.title;
        title.className = "card-title";
        cardBody.appendChild(title);
 
-       if (!isInshorts) {
-        const topics = document.createElement("p");
-        topics.textContent = `Topics: ${item.topics.join(", ")}`;
-        topics.className = "card-text";
-        cardBody.appendChild(topics);
-       }
-
+       // Set subtitle or preview
        const preview = document.createElement("p");
-       preview.textContent = `Preview: ${isInshorts ? item.subtitle : item.preview.intro}`;
+       if (source === "inshorts") {
+        preview.textContent = `Preview: ${item.subtitle}`;
+       } else {
+        preview.textContent = `Preview: ${item.preview.intro}`;
+       }
        preview.className = "card-text";
        cardBody.appendChild(preview);
 
+       // Add full preview button
        const btn = document.createElement("button");
        btn.textContent = "Read Full Preview";
        btn.className = "btn btn-primary";
        btn.setAttribute("data-toggle", "modal");
        btn.setAttribute("data-target", "#previewModal");
        btn.onclick = function () {
-        document.getElementById("modalBody").innerText = isInshorts ? item.content : item.preview.full;
-        document.getElementById("modalReadMore").href = isInshorts ? item.sourceUrl : item.url; // Set the Read More button's URL
+        if (source === "inshorts") {
+         document.getElementById("modalBody").innerText = item.content;
+         document.getElementById("modalReadMore").href = item.sourceUrl;
+        } else {
+         document.getElementById("modalBody").innerText = item.preview.full;
+         document.getElementById("modalReadMore").href = item.url;
+        }
        };
        cardBody.appendChild(btn);
-
        card.appendChild(cardBody);
-
-       // Append the card to the newsDiv
        newsDiv.appendChild(card);
-
-       // Append the newsDiv to the newsFeed
        newsFeed.appendChild(newsDiv);
       });
      })
      .catch((error) => console.error("Error:", error));
    }
+
    // Fetch the initial news feed
-   fetchNews("https://api.consumet.org/news/ann/recent-feeds", false);
+   fetchNews("https://news-api-six-navy.vercel.app/api/news/ann", "ann");
   </script>
  </body>
-  </html>
-  
+</html>

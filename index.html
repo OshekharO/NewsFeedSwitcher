@@ -78,8 +78,8 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
   <script>
-   document.getElementById("ann").addEventListener("click", () => fetchNews("https://news-api-six-navy.vercel.app/api/news/ann", "ann"));
-   document.getElementById("inshorts").addEventListener("click", () => fetchNews("https://news-api-six-navy.vercel.app/api/news/inshorts", "inshorts"));
+   document.getElementById("ann").addEventListener("click", () => fetchNews("https://api.consumet.org/news/ann/recent-feeds", "ann"));
+   document.getElementById("inshorts").addEventListener("click", () => fetchNews("https://inshorts.me/news/all?offset=0&limit=20", "inshorts"));
 
    document.getElementById("searchButton").addEventListener("click", function () {
     const query = document.getElementById("searchBar").value;
@@ -179,7 +179,7 @@
    }
 
    // Fetch the initial news feed
-   fetchNews("https://news-api-six-navy.vercel.app/api/news/ann", "ann");
+   fetchNews("https://api.consumet.org/news/ann/recent-feeds", "ann");
   </script>
  </body>
 </html>

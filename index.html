@@ -79,7 +79,7 @@
 
   <script>
    document.getElementById("ann").addEventListener("click", () => fetchNews("https://api.consumet.org/news/ann/recent-feeds", "ann"));
-   document.getElementById("inshorts").addEventListener("click", () => fetchNews("https://inshorts.me/news/all?offset=0&limit=20", "inshorts"));
+   document.getElementById("inshorts").addEventListener("click", () => fetchNews("https://gnews.io/api/v4/top-headlines?category=general&lang=en&country=in&max=10&apikey=a1786cc74dd5be34048782496f701ab0", "inshorts"));
 
    document.getElementById("searchButton").addEventListener("click", function () {
     const query = document.getElementById("searchBar").value;
@@ -98,7 +98,7 @@
      .then((data) => {
       let articles;
       if (source === "inshorts") {
-       articles = data.data.articles;
+       articles = data.articles;
       } else if (source === "newsapi") {
        articles = data.articles;
       } else {
@@ -117,7 +117,7 @@
        const thumbnail = document.createElement("img");
        let imgSrc;
        if (source === "inshorts") {
-        imgSrc = item.imageUrl;
+        imgSrc = item.image;
        } else if (source === "newsapi") {
         imgSrc = item.urlToImage;
        } else {
@@ -140,7 +140,7 @@
        // Set subtitle or preview
        const preview = document.createElement("p");
        if (source === "inshorts") {
-        preview.textContent = `Preview: ${item.subtitle}`;
+        preview.textContent = `Preview: ${item.description}`;
        } else if (source === "newsapi") {
         preview.textContent = `Preview: ${item.description}`;
        } else {
@@ -158,7 +158,7 @@
        btn.onclick = function () {
         if (source === "inshorts") {
          document.getElementById("modalBody").innerText = item.content;
-         document.getElementById("modalReadMore").href = item.sourceUrl;
+         document.getElementById("modalReadMore").href = item.url;
         } else if (source === "newsapi") {
          const parser = new DOMParser();
          const parsedHtml = parser.parseFromString(item.content, "text/html");

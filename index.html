@@ -83,7 +83,7 @@
 
    document.getElementById("searchButton").addEventListener("click", function () {
     const query = document.getElementById("searchBar").value;
-    fetchNews(`https://newsapi.org/v2/everything?q=${query}&apiKey=d9903836bbca401a856602f403802521`, "newsapi");
+    fetchNews(`https://newsapi.org/v2/everything?q=modi&apiKey=d9903836bbca401a856602f403802521`, "newsapi");
    });
 
    function fetchNews(url, source) {

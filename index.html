@@ -83,7 +83,7 @@
 
    document.getElementById("searchButton").addEventListener("click", function () {
     const query = document.getElementById("searchBar").value;
-    fetchNews(`https://newsapi.org/v2/everything?q=modi&apiKey=d9903836bbca401a856602f403802521`, "newsapi");
+    fetchNews(`https://inshorts.vercel.app/news/search?query=${query}&offset=0&limit=10`, "newsapi");
    });
 
    function fetchNews(url, source) {
@@ -100,7 +100,7 @@
       if (source === "inshorts") {
        articles = data.data.articles;
       } else if (source === "newsapi") {
-       articles = data.articles;
+       articles = data.data.articles;
       } else {
        articles = data;
       }
@@ -119,7 +119,7 @@
        if (source === "inshorts") {
         imgSrc = item.imageUrl;
        } else if (source === "newsapi") {
-        imgSrc = item.urlToImage;
+        imgSrc = item.imageUrl;
        } else {
         imgSrc = item.thumbnail;
        }
@@ -142,7 +142,7 @@
        if (source === "inshorts") {
         preview.textContent = `Preview: ${item.subtitle}`;
        } else if (source === "newsapi") {
-        preview.textContent = `Preview: ${item.description}`;
+        preview.textContent = `Preview: ${item.subtitle}`;
        } else {
         preview.textContent = `Preview: ${item.preview.intro}`;
        }
@@ -161,9 +161,9 @@
          document.getElementById("modalReadMore").href = item.sourceUrl;
         } else if (source === "newsapi") {
          const parser = new DOMParser();
-         const parsedHtml = parser.parseFromString(item.content, "text/html");
-         document.getElementById("modalBody").innerText = parsedHtml.body.textContent || "";
-         document.getElementById("modalReadMore").href = item.url;
+        // const parsedHtml = parser.parseFromString(item.content, "text/html");
+         document.getElementById("modalBody").innerText = item.content;
+         document.getElementById("modalReadMore").href = item.sourceUrl;
         } else {
          document.getElementById("modalBody").innerText = item.preview.full;
          document.getElementById("modalReadMore").href = item.url;

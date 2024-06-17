@@ -6,36 +6,36 @@
   <!-- Include Bootstrap CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
   <style>
-.d-flex {
-  overflow-x: auto;  /* Enable horizontal scrolling */
-  white-space: nowrap; /* Prevent wrapping to multiple lines */
-}
+   .d-flex {
+    overflow-x: auto; /* Enable horizontal scrolling */
+    white-space: nowrap; /* Prevent wrapping to multiple lines */
+   }
 
-.news-source {
-  width: 150px;
-  height: 40px;
-  padding-top: 8px;
-  line-height: 40px;
-  border-radius: 20px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.5s ease;
-  color: #ffffff;
-  font-weight: bold;
-  background-color: #dddddd;
-  display: inline-block;  /* Set display to inline-block for spacing */
-  margin-right: 10px;  /* Add margin for spacing between elements */
-}
+   .news-source {
+    width: 150px;
+    height: 40px;
+    padding-top: 8px;
+    line-height: 40px;
+    border-radius: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.5s ease;
+    color: #ffffff;
+    font-weight: bold;
+    background-color: #dddddd;
+    color: #000000;
+    display: inline-block; /* Set display to inline-block for spacing */
+    margin-right: 10px; /* Add margin for spacing between elements */
+   }
 
-.card {
-  height: 100%;
-}
+   .card {
+    height: 100%;
+   }
 
-.news-source:hover {
-  background-color: #000000;
-  color: #ffffff;
-}
-
+   .news-source:hover {
+    background-color: #000000;
+    color: #ffffff;
+   }
   </style>
  </head>
  <body>
@@ -179,7 +179,7 @@
          document.getElementById("modalReadMore").href = item.sourceUrl;
         } else if (source === "newsapi") {
          const parser = new DOMParser();
-        // const parsedHtml = parser.parseFromString(item.content, "text/html");
+         // const parsedHtml = parser.parseFromString(item.content, "text/html");
          document.getElementById("modalBody").innerText = item.content;
          document.getElementById("modalReadMore").href = item.sourceUrl;
         } else {

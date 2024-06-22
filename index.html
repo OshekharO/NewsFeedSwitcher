@@ -1,10 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>News Feed - Consumet and Inshorts</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Include Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+  <meta name="description" content="Get the latest news from Consumet and Inshorts, featuring top stories, trending topics, and breaking news.">
+  <meta name="keywords" content="news, consumet, inshorts, top stories, trending topics, breaking news">
+  <meta name="author" content="Saksham Shekher">
+  <meta name="copyright" content="2024 saksham.thedev.id">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://saksham.thedev.id/NewsFeedSwitcher/">
+  <link rel="alternate" hreflang="en" href="https://saksham.thedev.id/NewsFeedSwitcher/">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
   <style>
     .news-source {
       width: 150px;
@@ -57,7 +64,28 @@
   </style>
 </head>
 <body>
-  <div class="container py-3">
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">News Feed</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <main>
     <!-- Source switcher -->
     <div class="d-flex justify-content-between mb-3">
       <div id="ann" class="news-source">
@@ -78,7 +106,10 @@
 
     <!-- News Feed -->
     <div id="newsFeed" class="row row-cols-1 row-cols-md-2"></div>
-  </div>
+  </main>
+  <footer>
+    <p>2024 saksham.thedev.id</p>
+  </footer>
 
   <!-- Modal -->
   <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
@@ -102,8 +133,7 @@
   <!-- Include scripts -->
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-
-  <script>
+<script>
     document.getElementById("ann").addEventListener("click", () => fetchNews("https://api.fl-anime.com/news/ann/recent-feeds", "ann"));
     document.getElementById("inshorts").addEventListener("click", () => fetchNews("https://inshorts.vercel.app/news/top?offset=0&limit=10", "inshorts"));
 
@@ -207,5 +237,6 @@
     // Fetch the initial news feed
     fetchNews("https://inshorts.vercel.app/news/top?offset=0&limit=10", "inshorts");
   </script>
+            
 </body>
 </html>

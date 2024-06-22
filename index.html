@@ -32,60 +32,61 @@
       color: #ffffff;
     }
     .card {
-      height: 100%;
+      border: none;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
     }
     .card-img-top {
-      width: 100%;
       height: 150px;
       object-fit: cover;
       border-radius: 10px 10px 0 0;
     }
     .card-body {
-      padding: 1rem;
+      padding: 20px;
     }
     .card-title {
+      font-size: 18px;
       font-weight: bold;
-      margin-bottom: 0.5rem;
+      margin-bottom: 10px;
     }
     .card-text {
-      font-size: 0.9rem;
+      font-size: 14px;
       color: #666;
     }
     .btn-primary {
       background-color: #337ab7;
-      border-color: #2e6da4;
-      padding: 0.5rem 1rem;
-      font-size: 0.9rem;
+      border-color: #337ab7;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
       border-radius: 10px;
     }
+    .modal-content {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .modal-header {
+      background-color: #337ab7;
+      color: #fff;
+      padding: 20px;
+      border-radius: 10px 10px 0 0;
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
     .modal-body {
-      padding: 1rem;
+      padding: 20px;
+    }
+    .modal-footer {
+      padding: 20px;
+      border-top: none;
     }
   </style>
 </head>
 <body>
-  <header>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#">News Feed</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Contact</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  </header>
-  <main>
+  <div class="container py-3">
     <!-- Source switcher -->
     <div class="d-flex justify-content-between mb-3">
       <div id="ann" class="news-source">
@@ -106,10 +107,7 @@
 
     <!-- News Feed -->
     <div id="newsFeed" class="row row-cols-1 row-cols-md-2"></div>
-  </main>
-  <footer>
-    <p>2024 saksham.thedev.id</p>
-  </footer>
+  </div>
 
   <!-- Modal -->
   <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
@@ -133,7 +131,8 @@
   <!-- Include scripts -->
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<script>
+
+  <script>
     document.getElementById("ann").addEventListener("click", () => fetchNews("https://api.fl-anime.com/news/ann/recent-feeds", "ann"));
     document.getElementById("inshorts").addEventListener("click", () => fetchNews("https://inshorts.vercel.app/news/top?offset=0&limit=10", "inshorts"));
 
@@ -237,6 +236,5 @@
     // Fetch the initial news feed
     fetchNews("https://inshorts.vercel.app/news/top?offset=0&limit=10", "inshorts");
   </script>
-            
 </body>
 </html>

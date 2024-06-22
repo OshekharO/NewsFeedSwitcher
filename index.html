@@ -1,76 +1,102 @@
 <!DOCTYPE html>
 <html>
- <head>
+<head>
   <title>News Feed - Consumet and Inshorts</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Include Bootstrap CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
   <style>
-   .news-source {
-    width: 150px;
-    height: 40px;
-    padding-top: 8px;
-    line-height: 40px;
-    border-radius: 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.5s ease;
-    color: #ffffff;
-    font-weight: bold;
-    background-color: #dddddd;
-    color: #000000;
-   }
-   .card {
-    height: 100%;
-   }
-   .news-source:hover {
-    background-color: #000000;
-    color: #ffffff;
-   }
+    .news-source {
+      width: 150px;
+      height: 40px;
+      padding-top: 8px;
+      line-height: 40px;
+      border-radius: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.5s ease;
+      color: #ffffff;
+      font-weight: bold;
+      background-color: #dddddd;
+      color: #000000;
+    }
+    .news-source:hover {
+      background-color: #000000;
+      color: #ffffff;
+    }
+    .card {
+      height: 100%;
+    }
+    .card-img-top {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px 10px 0 0;
+    }
+    .card-body {
+      padding: 1rem;
+    }
+    .card-title {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .card-text {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .btn-primary {
+      background-color: #337ab7;
+      border-color: #2e6da4;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      border-radius: 10px;
+    }
+    .modal-body {
+      padding: 1rem;
+    }
   </style>
- </head>
- <body>
+</head>
+<body>
   <div class="container py-3">
-   <!-- Source switcher -->
-   <div class="d-flex justify-content-between mb-3">
-    <div id="ann" class="news-source">
-     <h5>AnimeNews</h5>
+    <!-- Source switcher -->
+    <div class="d-flex justify-content-between mb-3">
+      <div id="ann" class="news-source">
+        <h5>AnimeNews</h5>
+      </div>
+      <div id="inshorts" class="news-source">
+        <h5>Inshorts</h5>
+      </div>
     </div>
-    <div id="inshorts" class="news-source">
-     <h5>Inshorts</h5>
-    </div>
-   </div>
 
-   <!-- Search Bar -->
-   <div class="input-group mb-3">
-    <input type="text" id="searchBar" class="form-control" placeholder="Search News" aria-label="Search News" aria-describedby="searchButton" />
-    <div class="input-group-append">
-     <button class="btn btn-outline-secondary" type="button" id="searchButton">Search</button>
+    <!-- Search Bar -->
+    <div class="input-group mb-3">
+      <input type="text" id="searchBar" class="form-control" placeholder="Search News" aria-label="Search News" aria-describedby="searchButton" />
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" id="searchButton">Search</button>
+      </div>
     </div>
-   </div>
 
-   <!-- News Feed -->
-   <div id="newsFeed" class="row row-cols-1 row-cols-md-2"></div>
+    <!-- News Feed -->
+    <div id="newsFeed" class="row row-cols-1 row-cols-md-2"></div>
   </div>
 
   <!-- Modal -->
   <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
-   <div class="modal-dialog" role="document">
-    <div class="modal-content">
-     <div class="modal-header">
-      <h5 class="modal-title" id="previewModalLabel">News Preview</h5>
-      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-       <span aria-hidden="true">&times;</span>
-      </button>
-     </div>
-     <div class="modal-body" id="modalBody"></div>
-     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      <a id="modalReadMore" href="#" target="_blank" class="btn btn-primary ml-auto">Read More</a>
-      <!-- Read More button moved here -->
-     </div>
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="previewModalLabel">News Preview</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <a id="modalReadMore" href="#" target="_blank" class="btn btn-primary ml-auto">Read More</a>
+        </div>
+      </div>
     </div>
-   </div>
   </div>
 
   <!-- Include scripts -->
@@ -78,108 +104,108 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
   <script>
-   document.getElementById("ann").addEventListener("click", () => fetchNews("https://api.fl-anime.com/news/ann/recent-feeds", "ann"));
-   document.getElementById("inshorts").addEventListener("click", () => fetchNews("https://inshorts.vercel.app/news/top?offset=0&limit=10", "inshorts"));
+    document.getElementById("ann").addEventListener("click", () => fetchNews("https://api.fl-anime.com/news/ann/recent-feeds", "ann"));
+    document.getElementById("inshorts").addEventListener("click", () => fetchNews("https://inshorts.vercel.app/news/top?offset=0&limit=10", "inshorts"));
 
-   document.getElementById("searchButton").addEventListener("click", function () {
-    const query = document.getElementById("searchBar").value;
-    fetchNews(`https://inshorts.vercel.app/news/search?query=${query}&offset=0&limit=10`, "newsapi");
-   });
+    document.getElementById("searchButton").addEventListener("click", function () {
+      const query = document.getElementById("searchBar").value;
+      fetchNews(`https://inshorts.vercel.app/news/search?query=${query}&offset=0&limit=10`, "newsapi");
+    });
 
-   function fetchNews(url, source) {
+      function fetchNews(url, source) {
     // Clear existing news feed
     const newsFeed = document.getElementById("newsFeed");
     while (newsFeed.firstChild) {
-     newsFeed.removeChild(newsFeed.firstChild);
+      newsFeed.removeChild(newsFeed.firstChild);
     }
     // Fetch and display news
     fetch(url)
-     .then((response) => response.json())
-     .then((data) => {
-      let articles;
-      if (source === "inshorts") {
-       articles = data.data.articles;
-      } else if (source === "newsapi") {
-       articles = data.data.articles;
-      } else {
-       articles = data;
-      }
-      articles.forEach((item) => {
-       // Create a new div for each news item
-       const newsDiv = document.createElement("div");
-       newsDiv.className = "col mb-4";
-
-       // Create card element for bootstrap
-       const card = document.createElement("div");
-       card.className = "card h-100";
-
-       // Set image
-       const thumbnail = document.createElement("img");
-       let imgSrc;
-       if (source === "inshorts") {
-        imgSrc = item.imageUrl;
-       } else if (source === "newsapi") {
-        imgSrc = item.imageUrl;
-       } else {
-        imgSrc = item.thumbnail;
-       }
-       thumbnail.src = imgSrc || "https://www.afidium.com/wp-content/themes/evolve/library/media/images/no-thumbnail.jpg";
-       thumbnail.className = "card-img-top";
-       thumbnail.loading = "lazy";
-       card.appendChild(thumbnail);
-
-       const cardBody = document.createElement("div");
-       cardBody.className = "card-body";
-
-       // Set title
-       const title = document.createElement("h5");
-       title.textContent = item.title;
-       title.className = "card-title";
-       cardBody.appendChild(title);
-
-       // Set subtitle or preview
-       const preview = document.createElement("p");
-       if (source === "inshorts") {
-        preview.textContent = `Preview: ${item.subtitle}`;
-       } else if (source === "newsapi") {
-        preview.textContent = `Preview: ${item.subtitle}`;
-       } else {
-        preview.textContent = `Preview: ${item.preview.intro}`;
-       }
-       preview.className = "card-text";
-       cardBody.appendChild(preview);
-
-       // Add full preview button
-       const btn = document.createElement("button");
-       btn.textContent = "Read Full Preview";
-       btn.className = "btn btn-primary";
-       btn.setAttribute("data-toggle", "modal");
-       btn.setAttribute("data-target", "#previewModal");
-       btn.onclick = function () {
+      .then((response) => response.json())
+      .then((data) => {
+        let articles;
         if (source === "inshorts") {
-         document.getElementById("modalBody").innerText = item.content;
-         document.getElementById("modalReadMore").href = item.sourceUrl;
+          articles = data.data.articles;
         } else if (source === "newsapi") {
-         const parser = new DOMParser();
-         // const parsedHtml = parser.parseFromString(item.content, "text/html");
-         document.getElementById("modalBody").innerText = item.content;
-         document.getElementById("modalReadMore").href = item.sourceUrl;
+          articles = data.data.articles;
         } else {
-         document.getElementById("modalBody").innerText = item.preview.full;
-         document.getElementById("modalReadMore").href = item.url;
+          articles = data;
         }
-       };
-       cardBody.appendChild(btn);
-       card.appendChild(cardBody);
-       newsDiv.appendChild(card);
-       newsFeed.appendChild(newsDiv);
-      });
-     })
-     .catch((error) => console.error("Error:", error));
-   }
+        articles.forEach((item) => {
+          // Create a new div for each news item
+          const newsDiv = document.createElement("div");
+          newsDiv.className = "col mb-4";
 
-   // Fetch the initial news feed
-   fetchNews("https://inshorts.vercel.app/news/top?offset=0&limit=10", "inshorts");
+          // Create card element for bootstrap
+          const card = document.createElement("div");
+          card.className = "card h-100";
+
+          // Set image
+          const thumbnail = document.createElement("img");
+          let imgSrc;
+          if (source === "inshorts") {
+            imgSrc = item.imageUrl;
+          } else if (source === "newsapi") {
+            imgSrc = item.imageUrl;
+          } else {
+            imgSrc = item.thumbnail;
+          }
+          thumbnail.src = imgSrc || "https://www.afidium.com/wp-content/themes/evolve/library/media/images/no-thumbnail.jpg";
+          thumbnail.className = "card-img-top";
+          thumbnail.loading = "lazy";
+          card.appendChild(thumbnail);
+
+          const cardBody = document.createElement("div");
+          cardBody.className = "card-body";
+
+          // Set title
+          const title = document.createElement("h5");
+          title.textContent = item.title;
+          title.className = "card-title";
+          cardBody.appendChild(title);
+
+          // Set subtitle or preview
+          const preview = document.createElement("p");
+          if (source === "inshorts") {
+            preview.textContent = `Preview: ${item.subtitle}`;
+          } else if (source === "newsapi") {
+            preview.textContent = `Preview: ${item.subtitle}`;
+          } else {
+            preview.textContent = `Preview: ${item.preview.intro}`;
+          }
+          preview.className = "card-text";
+          cardBody.appendChild(preview);
+
+          // Add full preview button
+          const btn = document.createElement("button");
+          btn.textContent = "Read Full Preview";
+          btn.className = "btn btn-primary";
+          btn.setAttribute("data-toggle", "modal");
+          btn.setAttribute("data-target", "#previewModal");
+          btn.onclick = function () {
+            if (source === "inshorts") {
+              document.getElementById("modalBody").innerText = item.content;
+              document.getElementById("modalReadMore").href = item.sourceUrl;
+            } else if (source === "newsapi") {
+              const parser = new DOMParser();
+              // const parsedHtml = parser.parseFromString(item.content, "text/html");
+              document.getElementById("modalBody").innerText = item.content;
+              document.getElementById("modalReadMore").href = item.sourceUrl;
+            } else {
+              document.getElementById("modalBody").innerText = item.preview.full;
+              document.getElementById("modalReadMore").href = item.url;
+            }
+          };
+          cardBody.appendChild(btn);
+          card.appendChild(cardBody);
+          newsDiv.appendChild(card);
+          newsFeed.appendChild(newsDiv);
+        });
+      })
+      .catch((error) => console.error("Error:", error));
+    }
+
+    // Fetch the initial news feed
+    fetchNews("https://inshorts.vercel.app/news/top?offset=0&limit=10", "inshorts");
   </script>
- </body>
+</body>
 </html>

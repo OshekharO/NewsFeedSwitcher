@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
   <style>
    .news-source {
-    width: 150px;
+    width: 50%;
     height: 40px;
     padding-top: 8px;
     line-height: 40px;
@@ -40,6 +40,11 @@
    .news-source:hover {
     background-color: #000000;
     color: #ffffff;
+   }
+   .d-flex {
+    overflow-x: auto;
+    display: -webkit-box!important;
+    scrollbar-width: none;
    }
    .card {
     border: none;
@@ -105,6 +110,12 @@
     <div id="inshorts" class="news-source">
      <h5>Inshorts</h5>
     </div>
+    <div id="berita" class="news-source">
+     <h5>Berita</h5>
+    </div>
+    <div id="tickertick" class="news-source">
+     <h5>Ticker</h5>
+    </div>
    </div>
 
    <!-- Search Bar -->
@@ -145,6 +156,8 @@
   <script>
    document.getElementById("ann").addEventListener("click", () => fetchNews("https://api.fl-anime.com/news/ann/recent-feeds", "ann"));
    document.getElementById("inshorts").addEventListener("click", () => fetchNews("https://inshorts.vercel.app/news/top?offset=0&limit=10", "inshorts"));
+   document.getElementById("berita").addEventListener("click", () => fetchNews("https://berita-indo-api-next.vercel.app/api/antara-news/top-news", "berita"));
+   document.getElementById("tickertick").addEventListener("click", () => fetchNews("https://api.tickertick.com/feed", "tickertick"));
 
    document.getElementById("searchButton").addEventListener("click", function () {
     const query = document.getElementById("searchBar").value;
@@ -166,6 +179,10 @@
        articles = data.data.articles;
       } else if (source === "newsapi") {
        articles = data.data.articles;
+      } else if (source === "berita") {
+       articles = data.data;
+      } else if (source === "tickertick") {
+       articles = data.stories;
       } else {
        articles = data;
       }
@@ -185,6 +202,10 @@
         imgSrc = item.imageUrl;
        } else if (source === "newsapi") {
         imgSrc = item.imageUrl;
+       } else if (source === "berita) {
+        imgSrc = item.image;
+       } else if (source === "tickertick") {
+        imgSrc = item.favicon_url;
        } else {
         imgSrc = item.thumbnail;
        }
@@ -208,6 +229,10 @@
         preview.textContent = `Preview: ${item.subtitle}`;
        } else if (source === "newsapi") {
         preview.textContent = `Preview: ${item.subtitle}`;
+       } else if (source === "berita") {
+        preview.textContent = `Date: ${item.isoDate}`;
+       } else if (source === "tickertick") {
+        preview.textContent = `Site: ${item.site}`;
        } else {
         preview.textContent = `Preview: ${item.preview.intro}`;
        }
@@ -225,10 +250,16 @@
          document.getElementById("modalBody").innerText = item.content;
          document.getElementById("modalReadMore").href = item.sourceUrl;
         } else if (source === "newsapi") {
-         const parser = new DOMParser();
+         // const parser = new DOMParser();
          // const parsedHtml = parser.parseFromString(item.content, "text/html");
          document.getElementById("modalBody").innerText = item.content;
          document.getElementById("modalReadMore").href = item.sourceUrl;
+        } else if (source === "berita") {
+         document.getElementById("modalBody").innerText = item.description;
+         document.getElementById("modalReadMore").href = item.link;
+        } else if (source === "tickertick") {
+         document.getElementById("modalBody").innerText = item.description;
+         document.getElementById("modalReadMore").href = item.url;
         } else {
          document.getElementById("modalBody").innerText = item.preview.full;
          document.getElementById("modalReadMore").href = item.url;

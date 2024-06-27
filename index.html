@@ -156,8 +156,8 @@
   <script>
    document.getElementById("ann").addEventListener("click", () => fetchNews("https://api.fl-anime.com/news/ann/recent-feeds", "ann"));
    document.getElementById("inshorts").addEventListener("click", () => fetchNews("https://inshorts.vercel.app/news/top?offset=0&limit=10", "inshorts"));
-   document.getElementById("berita").addEventListener("click", () => fetchNews("https://berita-indo-api-next.vercel.app/api/antara-news/top-news", "berita"));
-   document.getElementById("tickertick").addEventListener("click", () => fetchNews("https://api.tickertick.com/feed", "tickertick"));
+   document.getElementById("berita").addEventListener("click", () => fetchNews("https://cors-bypasser-gilt.vercel.app/fetchdata?url=https://berita-indo-api-next.vercel.app/api/antara-news/top-news", "berita"));
+   document.getElementById("tickertick").addEventListener("click", () => fetchNews("https://cors-bypasser-gilt.vercel.app/fetchdata?url=https://api.tickertick.com/feed", "tickertick"));
 
    document.getElementById("searchButton").addEventListener("click", function () {
     const query = document.getElementById("searchBar").value;

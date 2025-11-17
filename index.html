@@ -1,250 +1,600 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
- <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>News Feed - Consumet and Inshorts</title>
-  <meta name="description" content="Get the latest news from Consumet and Inshorts, featuring top stories, trending topics, and breaking news." />
-  <meta name="keywords" content="news, consumet, inshorts, top stories, trending topics, breaking news" />
-  <meta name="author" content="Saksham Shekher" />
-  <meta name="copyright" content="2024 saksham.thedev.id" />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://saksham.thedev.id/NewsFeedSwitcher/" />
-  <link rel="alternate" hreflang="en" href="https://saksham.thedev.id/NewsFeedSwitcher/" />
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>News Feed — Anime & Inshorts</title>
+  <meta name="description" content="Latest anime & Inshorts news — AMOLED dark mode, mobile-first UI, subtle animations." />
 
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:site" content="https://saksham.thedev.id/NewsFeedSwitcher/" />
-  <meta name="twitter:title" content="News Feed - Consumet and Inshorts" />
-  <meta name="twitter:description" content="Get the latest news from Consumet and Inshorts, featuring top stories, trending topics, and breaking news." />
-
-  <meta property="og:url" content="https://saksham.thedev.id/NewsFeedSwitcher/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="News Feed - Consumet and Inshorts" />
-  <meta property="og:description" content="Get the latest news from Consumet and Inshorts, featuring top stories, trending topics, and breaking news." />
+  <!-- Bootstrap (light use for grid & modal) -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+
   <style>
-   .news-source {
-    width: 150px;
-    height: 40px;
-    padding-top: 8px;
-    line-height: 40px;
-    border-radius: 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.5s ease;
-    color: #ffffff;
-    font-weight: bold;
-    background-color: #dddddd;
-    color: #000000;
-   }
-   .news-source:hover {
-    background-color: #000000;
-    color: #ffffff;
-   }
-   .card {
-    border: none;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-   }
-   .card-img-top {
-    height: 150px;
-    object-fit: cover;
-    border-radius: 10px 10px 0 0;
-   }
-   .card-body {
-    padding: 20px;
-   }
-   .card-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-   }
-   .card-text {
-    font-size: 14px;
-    color: #666;
-   }
-   .btn-primary {
-    background-color: #337ab7;
-    border-color: #337ab7;
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 10px;
-   }
-   .modal-content {
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-   }
-   .modal-header {
-    background-color: #337ab7;
-    color: #fff;
-    padding: 20px;
-    border-radius: 10px 10px 0 0;
-   }
-   .modal-title {
-    font-size: 18px;
-    font-weight: bold;
-   }
-   .modal-body {
-    padding: 20px;
-   }
-   .modal-footer {
-    padding: 20px;
-    border-top: none;
-   }
+    /* ==================
+       THEME VARIABLES
+       ================== */
+    :root{
+      --bg: #ffffff;
+      --card-bg: #ffffff;
+      --text: #0b0b0b;
+      --muted: #6b6b6b;
+      --accent: #00e5ff; /* neon accent for AMOLED */
+      --card-radius: 12px;
+      --gap: 16px;
+    }
+
+    /* Dark / AMOLED theme */
+    :root[data-theme="dark"]{
+      --bg: #000000;         /* pure black for AMOLED */
+      --card-bg: #0b0b0b;    /* slightly off-black card */
+      --text: #e9f9fb;       /* soft neon-leaning white */
+      --muted: #9aaeb2;
+      --accent: #00e5ff;
+    }
+
+    /* Respect OS preference by default */
+    @media (prefers-color-scheme: dark){
+      :root:not([data-theme]) { 
+        --bg: #000000; 
+        --card-bg: #0b0b0b;
+        --text: #e9f9fb;
+        --muted: #9aaeb2;
+      }
+    }
+
+    /* ==================
+       LAYOUT & BASE
+       ================== */
+    html,body{
+      height:100%;
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container-app{
+      max-width:1100px;
+      padding:20px;
+    }
+
+    /* header */
+    .topbar{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:var(--gap);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .logo {
+      width:44px;
+      height:44px;
+      border-radius:10px;
+      background:linear-gradient(135deg,var(--accent), rgba(0,229,255,0.18));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#00181a;
+      font-weight:700;
+      font-size:18px;
+      box-shadow: 0 6px 20px rgba(0,229,255,0.08);
+    }
+    .brand h1{
+      font-size:18px;
+      margin:0;
+      letter-spacing:0.2px;
+    }
+    .controls {
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    /* source switcher pills */
+    .source-pill{
+      min-width:110px;
+      padding:10px 14px;
+      border-radius:999px;
+      text-align:center;
+      font-weight:600;
+      cursor:pointer;
+      background:transparent;
+      border:1px solid rgba(255,255,255,0.04);
+      color:var(--text);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .source-pill.active{
+      background: linear-gradient(90deg, rgba(0,229,255,0.06), rgba(0,229,255,0.02));
+      box-shadow: 0 6px 18px rgba(0,229,255,0.06);
+      transform: translateY(-2px);
+      color:var(--accent);
+    }
+
+    /* search */
+    .search-bar {
+      flex:1;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      margin: var(--gap) 0;
+    }
+    .search-bar input {
+      flex:1;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.06);
+      background:var(--card-bg);
+      color:var(--text);
+      outline:none;
+      box-shadow:none;
+    }
+    .search-bar button {
+      padding:10px 14px;
+      border-radius:10px;
+      background:transparent;
+      border:1px solid rgba(255,255,255,0.06);
+      color:var(--text);
+      font-weight:600;
+    }
+
+    /* grid */
+    #newsFeed{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:16px;
+    }
+
+    @media (max-width:820px){
+      #newsFeed{ grid-template-columns: 1fr; }
+      .brand h1{ font-size:16px; }
+    }
+
+    /* card style */
+    .card-news{
+      display:flex;
+      flex-direction:column;
+      background:var(--card-bg);
+      border-radius:var(--card-radius);
+      overflow:hidden;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.28);
+      border: 1px solid rgba(255,255,255,0.02);
+      transform-origin: center;
+      transition: transform .18s ease, box-shadow .18s ease;
+      min-height:150px;
+      will-change: transform, opacity;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: cardIn .42s ease forwards;
+    }
+
+    .card-news:hover{
+      transform: translateY(-6px);
+      box-shadow: 0 18px 40px rgba(0,229,255,0.06);
+    }
+
+    @keyframes cardIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-thumb{
+      width:100%;
+      height:160px;
+      object-fit:cover;
+      display:block;
+      background: linear-gradient(180deg,#0b0b0b,#111);
+    }
+
+    .card-body{
+      padding:12px 14px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .card-title{
+      font-size:16px;
+      margin:0;
+      line-height:1.2;
+      font-weight:700;
+      color:var(--text);
+    }
+    .card-preview{
+      font-size:13px;
+      color:var(--muted);
+      margin:0;
+      flex:1;
+      overflow:hidden;
+      display:-webkit-box;
+      -webkit-line-clamp:3;
+      -webkit-box-orient:vertical;
+    }
+    .card-actions{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      margin-top:8px;
+    }
+    .btn-primary-modern{
+      background: linear-gradient(90deg,var(--accent), rgba(0,229,255,0.18));
+      color:#00181a;
+      border:none;
+      padding:8px 12px;
+      border-radius:10px;
+      font-weight:700;
+      box-shadow: none;
+      cursor:pointer;
+      transition: transform .14s ease;
+    }
+    .btn-primary-modern:active { transform: translateY(1px); }
+
+    .muted {
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    /* loading skeleton (subtle pulse) */
+    .skeleton-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:16px;
+    }
+    .skeleton{
+      height:230px;
+      border-radius:12px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.035), rgba(255,255,255,0.02));
+      animation: pulse 1.2s linear infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.95; }
+      50% { opacity: 0.65; }
+      100% { opacity: 0.95; }
+    }
+    @media (max-width:820px){
+      .skeleton-grid{ grid-template-columns:1fr; }
+    }
+
+    /* floating theme toggle */
+    .toggle {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      background:transparent;
+      border:1px solid rgba(255,255,255,0.03);
+      padding:6px 8px;
+      border-radius:999px;
+      cursor:pointer;
+    }
+    .accent-dot {
+      width:18px;height:18px;border-radius:50%;
+      background:var(--accent);
+      box-shadow: 0 6px 18px rgba(0,229,255,0.08);
+    }
+
+    /* accessibility: focus rings */
+    .source-pill:focus, .toggle:focus, .btn-primary-modern:focus, .search-bar input:focus {
+      outline: 3px solid rgba(0,229,255,0.12);
+      outline-offset: 2px;
+    }
+
+    /* small UI niceties */
+    .meta-row{ display:flex; gap:10px; align-items:center; justify-content:space-between; margin-top:6px; }
+    .small-muted { color:var(--muted); font-size:12px; }
+
+    /* modal override subtle animation */
+    .modal-content {
+      background: var(--card-bg);
+      color:var(--text);
+      border-radius:12px;
+      overflow:hidden;
+      border:none;
+      transform: translateY(6px);
+      transition: transform .18s ease, opacity .18s ease;
+    }
+    .modal.fade .modal-dialog{
+      transform: translateY(12px);
+      transition: transform .22s ease;
+    }
+    .modal.show .modal-dialog{ transform: translateY(0); }
+
   </style>
- </head>
- <body>
-  <div class="container py-3">
-   <!-- Source switcher -->
-   <div class="d-flex justify-content-between mb-3">
-    <div id="ann" class="news-source">
-     <h5>AnimeNews</h5>
-    </div>
-    <div id="inshorts" class="news-source">
-     <h5>Inshorts</h5>
-    </div>
-   </div>
+</head>
+<body>
+  <div class="container container-app">
+    <div class="topbar" role="navigation" aria-label="Top bar">
+      <div class="brand" aria-hidden="false">
+        <div class="logo" aria-hidden="true">NF</div>
+        <div>
+          <h1>NewsFeed</h1>
+          <div class="small-muted">Anime & Inshorts • AMOLED</div>
+        </div>
+      </div>
 
-   <!-- Search Bar -->
-   <div class="input-group mb-3">
-    <input type="text" id="searchBar" class="form-control" placeholder="Search News" aria-label="Search News" aria-describedby="searchButton" />
-    <div class="input-group-append">
-     <button class="btn btn-outline-secondary" type="button" id="searchButton">Search</button>
+      <div class="controls" aria-hidden="false">
+        <div class="toggle" id="themeToggle" role="button" aria-label="Toggle theme" tabindex="0">
+          <div class="accent-dot" aria-hidden="true"></div>
+          <div id="themeLabel" style="font-weight:700;font-size:13px;color:var(--muted)">Auto</div>
+        </div>
+      </div>
     </div>
-   </div>
 
-   <!-- News Feed -->
-   <div id="newsFeed" class="row row-cols-1 row-cols-md-2"></div>
+    <!-- source pills -->
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <div id="ann" class="source-pill" role="button" tabindex="0" aria-pressed="false">AnimeNews</div>
+      <div id="inshorts" class="source-pill active" role="button" tabindex="0" aria-pressed="true">Inshorts</div>
+    </div>
+
+    <!-- search -->
+    <div class="search-bar" style="margin-top:12px;">
+      <input id="searchBar" type="search" placeholder="Search news (e.g. modi, garda, anime title)" aria-label="Search news" />
+      <button id="searchButton" aria-label="Search">Search</button>
+    </div>
+
+    <div id="feedback" style="margin-top:10px;"></div>
+
+    <!-- loading skeleton placeholder -->
+    <div id="skeleton" class="skeleton-grid" style="display:none;margin-top:12px;">
+      <div class="skeleton" aria-hidden="true"></div>
+      <div class="skeleton" aria-hidden="true"></div>
+      <div class="skeleton" aria-hidden="true"></div>
+      <div class="skeleton" aria-hidden="true"></div>
+    </div>
+
+    <!-- news grid -->
+    <div id="newsFeed" style="margin-top:12px;"></div>
   </div>
 
-  <!-- Modal -->
-  <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
-   <div class="modal-dialog" role="document">
-    <div class="modal-content">
-     <div class="modal-header">
-      <h5 class="modal-title" id="previewModalLabel">News Preview</h5>
-      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-       <span aria-hidden="true">&times;</span>
-      </button>
-     </div>
-     <div class="modal-body" id="modalBody"></div>
-     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      <a id="modalReadMore" href="#" target="_blank" class="btn btn-primary ml-auto">Read More</a>
-     </div>
+  <!-- Modal (Bootstrap) -->
+  <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header" style="background:linear-gradient(90deg,var(--accent), rgba(0,229,255,0.06));">
+          <h5 id="previewLabel" class="modal-title" style="color:#00181a;font-weight:800;">Article Preview</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color:var(--text);opacity:0.9;">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="modalBody" style="padding:18px; font-size:14px; color:var(--text); background:var(--card-bg);"></div>
+        <div class="modal-footer" style="border-top:none;">
+          <a id="modalReadMore" class="btn btn-primary-modern" target="_blank" rel="noopener">Read Full Article</a>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Close</button>
+        </div>
+      </div>
     </div>
-   </div>
   </div>
 
-  <!-- Include scripts -->
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <!-- Bootstrap + jQuery -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
   <script>
-   document.getElementById("ann").addEventListener("click", () => fetchNews("https://consumet8.vercel.app/news/ann/recent-feeds", "ann"));
-   document.getElementById("inshorts").addEventListener("click", () => fetchNews("https://inshorts.vercel.app/news/top?offset=0&limit=10", "inshorts"));
+    /***********************
+     Theme handling (Option A: OS auto + toggle)
+    ************************/
+    (function(){
+      const root = document.documentElement;
+      const toggle = document.getElementById('themeToggle');
+      const label = document.getElementById('themeLabel');
 
-   document.getElementById("searchButton").addEventListener("click", function () {
-    const query = document.getElementById("searchBar").value;
-    fetchNews(`https://inshorts.vercel.app/news/search?query=${query}&offset=0&limit=10`, "newsapi");
-   });
-
-   function fetchNews(url, source) {
-    // Clear existing news feed
-    const newsFeed = document.getElementById("newsFeed");
-    while (newsFeed.firstChild) {
-     newsFeed.removeChild(newsFeed.firstChild);
-    }
-    // Fetch and display news
-    fetch(url)
-     .then((response) => response.json())
-     .then((data) => {
-      let articles;
-      if (source === "inshorts") {
-       articles = data.data.articles;
-      } else if (source === "newsapi") {
-       articles = data.data.articles;
-      } else {
-       articles = data;
-      }
-      articles.forEach((item) => {
-       // Create a new div for each news item
-       const newsDiv = document.createElement("div");
-       newsDiv.className = "col mb-4";
-
-       // Create card element for bootstrap
-       const card = document.createElement("div");
-       card.className = "card h-100";
-
-       // Set image
-       const thumbnail = document.createElement("img");
-       let imgSrc;
-       if (source === "inshorts") {
-        imgSrc = item.imageUrl;
-       } else if (source === "newsapi") {
-        imgSrc = item.imageUrl;
-       } else {
-        imgSrc = item.thumbnail;
-       }
-       thumbnail.src = imgSrc || "https://www.afidium.com/wp-content/themes/evolve/library/media/images/no-thumbnail.jpg";
-       thumbnail.className = "card-img-top";
-       thumbnail.loading = "lazy";
-       card.appendChild(thumbnail);
-
-       const cardBody = document.createElement("div");
-       cardBody.className = "card-body";
-
-       // Set title
-       const title = document.createElement("h5");
-       title.textContent = item.title;
-       title.className = "card-title";
-       cardBody.appendChild(title);
-
-       // Set subtitle or preview
-       const preview = document.createElement("p");
-       if (source === "inshorts") {
-        preview.textContent = `Preview: ${item.subtitle}`;
-       } else if (source === "newsapi") {
-        preview.textContent = `Preview: ${item.subtitle}`;
-       } else {
-        preview.textContent = `Preview: ${item.preview.intro}`;
-       }
-       preview.className = "card-text";
-       cardBody.appendChild(preview);
-
-       // Add full preview button
-       const btn = document.createElement("button");
-       btn.textContent = "Read Full Preview";
-       btn.className = "btn btn-primary";
-       btn.setAttribute("data-toggle", "modal");
-       btn.setAttribute("data-target", "#previewModal");
-       btn.onclick = function () {
-        if (source === "inshorts") {
-         document.getElementById("modalBody").innerText = item.content;
-         document.getElementById("modalReadMore").href = item.sourceUrl;
-        } else if (source === "newsapi") {
-         const parser = new DOMParser();
-         // const parsedHtml = parser.parseFromString(item.content, "text/html");
-         document.getElementById("modalBody").innerText = item.content;
-         document.getElementById("modalReadMore").href = item.sourceUrl;
+      // read saved preference
+      const saved = localStorage.getItem('nf-theme'); // values: 'auto' | 'dark' | 'light'
+      function applyTheme(mode){
+        if(!mode || mode === 'auto'){
+          root.removeAttribute('data-theme');
+          label.textContent = 'Auto';
+          toggle.setAttribute('aria-pressed','false');
+        } else if(mode === 'dark'){
+          root.setAttribute('data-theme','dark');
+          label.textContent = 'Dark';
+          toggle.setAttribute('aria-pressed','true');
         } else {
-         document.getElementById("modalBody").innerText = item.preview.full;
-         document.getElementById("modalReadMore").href = item.url;
+          root.setAttribute('data-theme','light');
+          label.textContent = 'Light';
+          toggle.setAttribute('aria-pressed','true');
         }
-       };
-       cardBody.appendChild(btn);
-       card.appendChild(cardBody);
-       newsDiv.appendChild(card);
-       newsFeed.appendChild(newsDiv);
-      });
-     })
-     .catch((error) => console.error("Error:", error));
-   }
+      }
 
-   // Fetch the initial news feed
-   fetchNews("https://inshorts.vercel.app/news/top?offset=0&limit=10", "inshorts");
+      // cycle: auto -> dark -> light -> auto ...
+      function nextMode(current){
+        if(current === 'auto') return 'dark';
+        if(current === 'dark') return 'light';
+        return 'auto';
+      }
+
+      let mode = saved || 'auto';
+      applyTheme(mode);
+
+      toggle.addEventListener('click', () => {
+        mode = nextMode(mode);
+        applyTheme(mode);
+        localStorage.setItem('nf-theme', mode);
+      });
+      toggle.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle.click(); }
+      });
+    })();
+
+    /***********************
+     API URLs & helpers
+    ************************/
+    const URLs = {
+      ann: "https://aninews.vercel.app/api/news",                    // anime news new API
+      inshorts: "https://inshorts.vercel.app/news/top?offset=0&limit=10",
+      search: (q) => `https://inshorts.vercel.app/news/search?query=${encodeURIComponent(q)}&offset=0&limit=10`
+    };
+
+    const newsFeed = document.getElementById('newsFeed');
+    const skeleton = document.getElementById('skeleton');
+    const feedback = document.getElementById('feedback');
+    const searchInput = document.getElementById('searchBar');
+
+    // small utility to format date in local string
+    function fmtDate(iso){
+      try { return new Date(iso).toLocaleString(); } catch(e){ return ''; }
+    }
+
+    // show skeleton
+    function showSkeleton(on=true){
+      skeleton.style.display = on ? 'grid' : 'none';
+    }
+
+    function showFeedback(text='', type='error'){
+      feedback.innerHTML = '';
+      if(!text) return;
+      const div = document.createElement('div');
+      div.className = type === 'error' ? 'alert alert-danger' : 'alert alert-info';
+      div.textContent = text;
+      feedback.appendChild(div);
+    }
+
+    // render one card
+    function createCard(item, source){
+      const card = document.createElement('article');
+      card.className = 'card-news';
+      // subtle stagger animation delay
+      const delay = (Math.random() * 120) | 0;
+      card.style.animationDelay = (delay/1000) + 's';
+
+      // map fields per source
+      let img = '', title = '', preview = '', full = '', link = '', meta = '';
+      if(source === 'ann'){
+        img = item.image || ('https://via.placeholder.com/600x400?text=No+Image');
+        title = item.title || '';
+        preview = item.excerpt || '';
+        full = item.excerpt || '';
+        link = item.link || '';
+        meta = item.date ? fmtDate(item.date) : (item.source || '');
+      } else {
+        img = item.imageUrl || ('https://via.placeholder.com/600x400?text=No+Image');
+        title = item.title || '';
+        preview = item.subtitle || item.content || '';
+        full = item.content || item.subtitle || '';
+        link = item.sourceUrl || '';
+        meta = (item.sourceName || '') + (item.createdAt ? (' • ' + new Date(item.createdAt).toLocaleString()) : '');
+      }
+
+      card.innerHTML = `
+        <img class="card-thumb" src="${img}" alt="${escapeHtml(title)}" loading="lazy" />
+        <div class="card-body">
+          <h3 class="card-title">${escapeHtml(title)}</h3>
+          <p class="card-preview">${escapeHtml(preview)}</p>
+          <div class="meta-row">
+            <div class="muted">${escapeHtml(meta)}</div>
+            <div class="card-actions">
+              <button class="btn-primary-modern" type="button">Preview</button>
+              <a class="small-muted" href="${link || '#'}" target="_blank" rel="noopener">Open</a>
+            </div>
+          </div>
+        </div>
+      `;
+      // preview button open modal
+      const btn = card.querySelector('.btn-primary-modern');
+      btn.addEventListener('click', () => openPreview(full, link, title));
+      return card;
+    }
+
+    // sanitize basic injection (we only use textContent in modal, but alt/title come from API)
+    function escapeHtml(str=''){
+      return String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+    }
+
+    // open modal with preview text + link
+    function openPreview(text, url, title=''){
+      const modalBody = document.getElementById('modalBody');
+      const modalReadMore = document.getElementById('modalReadMore');
+      modalBody.textContent = text || 'No preview available.';
+      modalReadMore.href = url || '#';
+      // set modal title accessible
+      document.getElementById('previewLabel').textContent = title || 'Article Preview';
+      // show bootstrap modal
+      $('#previewModal').modal('show');
+    }
+
+    // main fetch routine
+    async function fetchNews(url, source){
+      newsFeed.innerHTML = '';
+      showFeedback('');
+      showSkeleton(true);
+
+      try {
+        const res = await fetch(url, {cache: 'no-store'});
+        if(!res.ok) throw new Error('Network response not ok ' + res.status);
+        const data = await res.json();
+
+        // map articles based on source
+        let articles = [];
+        if(source === 'ann'){
+          // aninews returns { success:true, data: [...] }
+          articles = Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : []);
+        } else {
+          // inshorts (top) returns { data: { count, articles: [...] } }
+          articles = data?.data?.articles || [];
+        }
+
+        if(!articles.length){
+          showFeedback('No articles returned for this query.', 'info');
+          newsFeed.innerHTML = '';
+          showSkeleton(false);
+          return;
+        }
+
+        // append cards
+        const frag = document.createDocumentFragment();
+        articles.forEach(a => frag.appendChild(createCard(a, source)));
+        newsFeed.appendChild(frag);
+      } catch(err){
+        console.error(err);
+        showFeedback('Failed to load news — try again.', 'error');
+      } finally {
+        showSkeleton(false);
+      }
+    }
+
+    // UI control wiring
+    document.getElementById('ann').addEventListener('click', () => {
+      setActivePill('ann');
+      fetchNews(URLs.ann, 'ann');
+    });
+    document.getElementById('inshorts').addEventListener('click', () => {
+      setActivePill('inshorts');
+      fetchNews(URLs.inshorts, 'inshorts');
+    });
+
+    // make pills keyboard accessible
+    function setActivePill(id){
+      document.querySelectorAll('.source-pill').forEach(p => {
+        p.classList.toggle('active', p.id === id);
+        p.setAttribute('aria-pressed', p.id === id ? 'true' : 'false');
+      });
+    }
+    document.querySelectorAll('.source-pill').forEach(el=>{
+      el.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' ') el.click(); });
+    });
+
+    // search
+    document.getElementById('searchButton').addEventListener('click', () => {
+      const q = searchInput.value.trim();
+      if(!q) return;
+      // deselect pills visually
+      document.querySelectorAll('.source-pill').forEach(p=>p.classList.remove('active'));
+      fetchNews(URLs.search(q), 'inshorts');
+    });
+    searchInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') document.getElementById('searchButton').click(); });
+
+    // initial load (inshorts)
+    (function init(){
+      setActivePill('inshorts');
+      fetchNews(URLs.inshorts,'inshorts');
+      // show skeleton placeholders while loading
+      showSkeleton(true);
+    })();
+
   </script>
- </body>
+</body>
 </html>

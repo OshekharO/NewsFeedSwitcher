@@ -1,31 +1,41 @@
-# NewsFeedSwitcher
+# 📰 NewsFeedSwitcher — Anime & Inshorts News
 
-NewsFeedSwitcher is a simple web-based application that provides the user with a feed of news articles from two different sources: AnimeNewsNetwork (via Consumet API) and Inshorts. Users can switch between these two sources with a simple click. Moreover, when Inshorts is selected, users are able to search for news articles by keywords.
+A fast, mobile-optimized news viewer featuring **AnimeNews** + **Inshorts** with **AMOLED dark mode**, **smooth animations**, and **clean UI**.
 
-## Table of Contents
+## 🚀 Features
 
-- [Usage](#usage)
-- [Contribution](#contribution)
-- [Credits](#credits)
+* 🔥 Fetch Anime news from **AnimeNews API**
+* 📰 Inshorts top news + search support
+* 🌙 **AMOLED Dark Mode** (Auto-detect + manual toggle)
+* 📱 Fully mobile-optimized layout
+* ✨ Smooth fade/slide card animations
+* 🖼 Lazy-loaded thumbnails + fallback images
+* 🎯 Accessible UI (keyboard + ARIA support)
 
-## Usage
+## 🔗 APIs Used
 
-Since it's a static HTML file, you can simply open the `index.html` file in any web browser to run the application. 
+* AnimeNews: `https://aninews.vercel.app/api/news`
+* Inshorts Top News: `https://inshorts.vercel.app/news/top`
+* Inshorts Search: `https://inshorts.vercel.app/news/search`
 
-Alternatively, you can host it on any static file server. The application will be accessible at the root of your server (e.g., `http://localhost`).
+## 📦 Setup
 
-## Contribution
+Just open the HTML file in any browser — no build tools required.
 
-Contributions, issues and feature requests are welcome. Feel free to check [issues page](https://github.com/OshekharO/NewsFeedSwitcher/issues) if you want to contribute.
+```bash
+git clone https://github.com/OshekharO/NewsFeedSwitcher
+cd NewsFeedSwitcher
+open index.html
+```
 
-## Credits
+## 🧩 Tech Stack
 
-This project is made possible thanks to the APIs provided by Consumet and Inshorts. The Consumet API is used to fetch news from AnimeNewsNetwork, and the Inshorts API is used to fetch and search news from Inshorts. Additionally huge thanks to ChatGPT for assistance.
+* HTML5 + CSS3
+* Vanilla JavaScript
+* Bootstrap (modal + grid only)
 
-## License
+## 📝 License
 
-MIT licensed. See the [LICENSE](https://github.com/OshekharO/NewsFeedSwitcher/blob/main/LICENSE) file for full details.
+MIT License © 2025 Saksham Shekher
 
-## Author
-
-Built with ❤️ by [Saksham Shekher](https://github.com/OshekharO).
+---

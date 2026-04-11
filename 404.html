@@ -1,40 +1,60 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>404 - Not Found</title>
-<style>
- body{
-  margin:0;font-family:Inter,Arial;
-  background:#000;color:#e9f9fb;
-  display:flex;justify-content:center;align-items:center;
-  height:100vh;text-align:center;padding:20px;
- }
- .box{
-  max-width:360px;animation:fade .8s ease;
- }
- h1{
-  font-size:68px;margin:0;
-  background:linear-gradient(90deg,#00e5ff,#007bff);
-  -webkit-background-clip:text;color:transparent;
- }
- p{color:#9aaeb2;font-size:16px;margin:10px 0 20px;}
- button{
-  padding:10px 20px;border-radius:10px;
-  background:linear-gradient(90deg,#00e5ff,#005eff);
-  border:none;font-weight:700;color:#00181a;
-  cursor:pointer;transition:.15s;
- }
- button:hover{transform:translateY(-2px);}
- @keyframes fade{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>404 — Page Not Found</title>
+  <meta name="theme-color" content="#000000" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Arial, sans-serif;
+      background: #000;
+      color: #e9f9fb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100dvh;
+      text-align: center;
+      padding: 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .box { max-width: 360px; animation: fadeUp .7s ease; }
+    h1 {
+      font-size: 72px;
+      font-weight: 800;
+      background: linear-gradient(90deg, #00e5ff, #0077ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+    p { color: #7a9fa5; font-size: 16px; margin: 12px 0 24px; }
+    button {
+      padding: 10px 22px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #00e5ff, #005eff);
+      border: none;
+      font-weight: 700;
+      font-size: 14px;
+      color: #003038;
+      cursor: pointer;
+      transition: transform .15s ease;
+    }
+    button:hover { transform: translateY(-2px); }
+    button:active { transform: none; }
+    button:focus-visible { outline: 2px solid rgba(0,229,255,.6); outline-offset: 2px; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
-<div class="box">
- <h1>404</h1>
- <p>Oops! This page doesn't exist or was moved.</p>
- <button onclick="history.back()">Go Back</button>
-</div>
+  <main class="box">
+    <h1>404</h1>
+    <p>This page doesn't exist or was moved.</p>
+    <button type="button" onclick="history.back()">Go Back</button>
+  </main>
 </body>
 </html>

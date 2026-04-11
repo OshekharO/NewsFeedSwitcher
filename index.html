@@ -53,6 +53,14 @@
 
     /* === BASE === */
     html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0s !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0s !important;
+      }
+    }
     body {
       font-family: Inter, ui-sans-serif, system-ui, -apple-system,
                    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -421,7 +429,7 @@
         </div>
       </div>
       <button class="theme-btn" id="themeToggle"
-              aria-label="Cycle theme: Auto, Dark, Light" aria-pressed="false">
+              aria-label="Theme: Auto">
         <span class="theme-dot" aria-hidden="true"></span>
         <span id="themeLabel">Auto</span>
       </button>
@@ -477,7 +485,7 @@
     /* ====================================================================
        THEME
     ==================================================================== */
-    const ThemeManager = (() => {
+    (() => {
       const root   = document.documentElement;
       const btn    = document.getElementById('themeToggle');
       const label  = document.getElementById('themeLabel');
@@ -488,8 +496,9 @@
         if (mode === 'dark')       root.setAttribute('data-theme', 'dark');
         else if (mode === 'light') root.setAttribute('data-theme', 'light');
         else                       root.removeAttribute('data-theme');
-        label.textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
-        btn.setAttribute('aria-pressed', mode !== 'auto' ? 'true' : 'false');
+        const display = mode.charAt(0).toUpperCase() + mode.slice(1);
+        label.textContent  = display;
+        btn.setAttribute('aria-label', 'Theme: ' + display);
       }
 
       let mode = localStorage.getItem(STORE) || 'auto';
@@ -527,6 +536,14 @@
       '<text x="300" y="170" dominant-baseline="middle" text-anchor="middle" ' +
       'font-family="sans-serif" font-size="14" fill="#555">No Image</text></svg>'
     );
+
+    function getSafeArticleUrl(url) {
+      if (typeof url !== 'string' || !url.trim()) return null;
+      try {
+        const parsed = new URL(url, window.location.href);
+        return (parsed.protocol === 'http:' || parsed.protocol === 'https:') ? parsed.href : null;
+      } catch (_) { return null; }
+    }
 
     /* ====================================================================
        FEEDBACK & SKELETON
@@ -620,10 +637,18 @@
 
       const openLink = document.createElement('a');
       openLink.className   = 'btn-open';
-      openLink.href        = a.link || '#';
       openLink.textContent = 'Open ↗';
       openLink.target      = '_blank';
       openLink.rel         = 'noopener noreferrer';
+      const safeCardUrl = getSafeArticleUrl(a.link);
+      if (safeCardUrl) {
+        openLink.href = safeCardUrl;
+      } else {
+        openLink.removeAttribute('href');
+        openLink.setAttribute('aria-disabled', 'true');
+        openLink.style.opacity = '0.4';
+        openLink.style.cursor  = 'default';
+      }
 
       actions.append(previewBtn, openLink);
       footer.append(metaEl, actions);
@@ -641,9 +666,21 @@
     const dialogTitle    = document.getElementById('dialogTitle');
 
     function openDialog(text, url, title = '') {
-      dialogTitle.textContent    = title || 'Article Preview';
-      dialogBody.textContent     = text  || 'No preview available.';
-      dialogReadMore.href        = url   || '#';
+      const safeUrl = getSafeArticleUrl(url);
+
+      dialogTitle.textContent = title || 'Article Preview';
+      dialogBody.textContent  = text  || 'No preview available.';
+
+      if (safeUrl) {
+        dialogReadMore.href = safeUrl;
+        dialogReadMore.hidden = false;
+        dialogReadMore.removeAttribute('aria-disabled');
+      } else {
+        dialogReadMore.removeAttribute('href');
+        dialogReadMore.hidden = true;
+        dialogReadMore.setAttribute('aria-disabled', 'true');
+      }
+
       dialog.showModal();
     }
 

@@ -3,598 +3,772 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>News Feed — Anime & Inshorts</title>
-  <meta name="description" content="Latest anime & Inshorts news — AMOLED dark mode, mobile-first UI, subtle animations." />
-
-  <!-- Bootstrap (light use for grid & modal) -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+  <title>NewsFeed — Anime &amp; Inshorts</title>
+  <meta name="description" content="Latest anime &amp; Inshorts news — AMOLED dark mode, mobile-first." />
+  <meta name="theme-color" content="#000000" />
 
   <style>
-    /* ==================
-       THEME VARIABLES
-       ================== */
-    :root{
-      --bg: #ffffff;
-      --card-bg: #ffffff;
-      --text: #0b0b0b;
-      --muted: #6b6b6b;
-      --accent: #00e5ff; /* neon accent for AMOLED */
-      --card-radius: 12px;
-      --gap: 16px;
+    /* === RESET === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    img { display: block; max-width: 100%; }
+    button, a { font: inherit; }
+
+    /* === DESIGN TOKENS === */
+    :root {
+      --bg:           #ffffff;
+      --surface:      #f3f4f6;
+      --text:         #0b0b0b;
+      --text-muted:   #6b6b6b;
+      --accent:       #00e5ff;
+      --accent-text:  #003038;
+      --radius:       12px;
+      --gap:          16px;
+      --shadow:       0 4px 20px rgba(0,0,0,.08);
+      --shadow-hover: 0 12px 36px rgba(0,0,0,.14);
+      --border:       rgba(0,0,0,.08);
+      --ease:         .18s ease;
     }
 
-    /* Dark / AMOLED theme */
-    :root[data-theme="dark"]{
-      --bg: #000000;         /* pure black for AMOLED */
-      --card-bg: #0b0b0b;    /* slightly off-black card */
-      --text: #e9f9fb;       /* soft neon-leaning white */
-      --muted: #9aaeb2;
-      --accent: #00e5ff;
+    [data-theme="dark"] {
+      --bg:           #000000;
+      --surface:      #0b0b0b;
+      --text:         #e9f9fb;
+      --text-muted:   #7a9fa5;
+      --shadow:       0 4px 20px rgba(0,0,0,.5);
+      --shadow-hover: 0 12px 36px rgba(0,229,255,.06);
+      --border:       rgba(255,255,255,.04);
     }
 
-    /* Respect OS preference by default */
-    @media (prefers-color-scheme: dark){
-      :root:not([data-theme]) { 
-        --bg: #000000; 
-        --card-bg: #0b0b0b;
-        --text: #e9f9fb;
-        --muted: #9aaeb2;
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg:           #000000;
+        --surface:      #0b0b0b;
+        --text:         #e9f9fb;
+        --text-muted:   #7a9fa5;
+        --shadow:       0 4px 20px rgba(0,0,0,.5);
+        --shadow-hover: 0 12px 36px rgba(0,229,255,.06);
+        --border:       rgba(255,255,255,.04);
       }
     }
 
-    /* ==================
-       LAYOUT & BASE
-       ================== */
-    html,body{
-      height:100%;
-      margin:0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background:var(--bg);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
+    /* === BASE === */
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0s !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0s !important;
+      }
+    }
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+                   "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100dvh;
     }
 
-    .container-app{
-      max-width:1100px;
-      padding:20px;
+    /* === LAYOUT === */
+    .app {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px 16px 48px;
     }
 
-    /* header */
-    .topbar{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:var(--gap);
+    /* === TOP BAR === */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: var(--gap);
     }
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-logo {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), rgba(0,229,255,.18));
+      display: grid;
+      place-items: center;
+      color: var(--accent-text);
+      font-weight: 800;
+      font-size: 17px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(0,229,255,.12);
+      user-select: none;
     }
-    .logo {
-      width:44px;
-      height:44px;
-      border-radius:10px;
-      background:linear-gradient(135deg,var(--accent), rgba(0,229,255,0.18));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:#00181a;
-      font-weight:700;
-      font-size:18px;
-      box-shadow: 0 6px 20px rgba(0,229,255,0.08);
+    .brand-name {
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.15;
     }
-    .brand h1{
-      font-size:18px;
-      margin:0;
-      letter-spacing:0.2px;
+    .brand-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    /* === THEME TOGGLE === */
+    .theme-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 10px 6px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      transition: border-color var(--ease);
     }
-    .controls {
-      display:flex;
-      gap:10px;
-      align-items:center;
+    .theme-btn:hover { border-color: rgba(0,229,255,.35); }
+    .theme-dot {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(0,229,255,.4);
+      flex-shrink: 0;
     }
 
-    /* source switcher pills */
-    .source-pill{
-      min-width:110px;
-      padding:10px 14px;
-      border-radius:999px;
-      text-align:center;
-      font-weight:600;
-      cursor:pointer;
-      background:transparent;
-      border:1px solid rgba(255,255,255,0.04);
-      color:var(--text);
-      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    /* === SOURCE PILLS === */
+    .source-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
     }
-    .source-pill.active{
-      background: linear-gradient(90deg, rgba(0,229,255,0.06), rgba(0,229,255,0.02));
-      box-shadow: 0 6px 18px rgba(0,229,255,0.06);
-      transform: translateY(-2px);
-      color:var(--accent);
+    .source-pill {
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      transition: color var(--ease), border-color var(--ease),
+                  background var(--ease), transform var(--ease), box-shadow var(--ease);
     }
-
-    /* search */
-    .search-bar {
-      flex:1;
-      display:flex;
-      gap:8px;
-      align-items:center;
-      margin: var(--gap) 0;
+    .source-pill[aria-pressed="true"] {
+      color: var(--accent);
+      border-color: rgba(0,229,255,.25);
+      background: rgba(0,229,255,.06);
+      box-shadow: 0 4px 16px rgba(0,229,255,.08);
+      transform: translateY(-1px);
     }
-    .search-bar input {
-      flex:1;
-      padding:12px 14px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,0.06);
-      background:var(--card-bg);
-      color:var(--text);
-      outline:none;
-      box-shadow:none;
-    }
-    .search-bar button {
-      padding:10px 14px;
-      border-radius:10px;
-      background:transparent;
-      border:1px solid rgba(255,255,255,0.06);
-      color:var(--text);
-      font-weight:600;
+    .source-pill:hover:not([aria-pressed="true"]) {
+      border-color: rgba(0,229,255,.15);
+      color: var(--text);
     }
 
-    /* grid */
-    #newsFeed{
-      display:grid;
+    /* === SEARCH === */
+    .search-row { display: flex; gap: 8px; margin-bottom: var(--gap); }
+    .search-input {
+      flex: 1;
+      padding: 11px 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: border-color var(--ease), box-shadow var(--ease);
+    }
+    .search-input::placeholder { color: var(--text-muted); }
+    .search-input:focus {
+      border-color: rgba(0,229,255,.4);
+      box-shadow: 0 0 0 3px rgba(0,229,255,.08);
+    }
+    .search-btn {
+      padding: 11px 18px;
+      border-radius: var(--radius);
+      background: linear-gradient(90deg, var(--accent), #00bcd4);
+      border: none;
+      color: var(--accent-text);
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform var(--ease), box-shadow var(--ease);
+    }
+    .search-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,229,255,.2); }
+    .search-btn:active { transform: none; }
+
+    /* === FEEDBACK === */
+    .alert {
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      margin-bottom: var(--gap);
+      display: none;
+    }
+    .alert.visible { display: block; }
+    .alert-error { background: rgba(239,68,68,.1); color: #f87171; border: 1px solid rgba(239,68,68,.2); }
+    .alert-info  { background: rgba(0,229,255,.07); color: var(--text-muted); border: 1px solid rgba(0,229,255,.12); }
+
+    /* === SKELETON === */
+    .skeleton-grid {
+      display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap:16px;
+      gap: var(--gap);
+      margin-bottom: var(--gap);
     }
-
-    @media (max-width:820px){
-      #newsFeed{ grid-template-columns: 1fr; }
-      .brand h1{ font-size:16px; }
+    @media (max-width: 720px) { .skeleton-grid { grid-template-columns: 1fr; } }
+    .skeleton-card {
+      height: 240px;
+      border-radius: var(--radius);
+      background: var(--surface);
+      overflow: hidden;
+      position: relative;
     }
+    .skeleton-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.05) 50%, transparent 100%);
+      animation: shimmer 1.4s linear infinite;
+      transform: translateX(-100%);
+    }
+    @keyframes shimmer { to { transform: translateX(200%); } }
 
-    /* card style */
-    .card-news{
-      display:flex;
-      flex-direction:column;
-      background:var(--card-bg);
-      border-radius:var(--card-radius);
-      overflow:hidden;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.28);
-      border: 1px solid rgba(255,255,255,0.02);
-      transform-origin: center;
-      transition: transform .18s ease, box-shadow .18s ease;
-      min-height:150px;
-      will-change: transform, opacity;
+    /* === NEWS GRID === */
+    #feed {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--gap);
+    }
+    @media (max-width: 720px) { #feed { grid-template-columns: 1fr; } }
+
+    /* === NEWS CARD === */
+    .card {
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform var(--ease), box-shadow var(--ease);
       opacity: 0;
-      transform: translateY(10px);
-      animation: cardIn .42s ease forwards;
+      animation: cardIn .4s ease forwards;
     }
+    @keyframes cardIn { to { opacity: 1; transform: translateY(0); } }
+    .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
 
-    .card-news:hover{
-      transform: translateY(-6px);
-      box-shadow: 0 18px 40px rgba(0,229,255,0.06);
+    .card-img {
+      width: 100%; height: 170px;
+      object-fit: cover;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
     }
+    .card-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text);
+    }
+    .card-excerpt {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .card-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+    .btn-preview {
+      padding: 7px 12px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, var(--accent), rgba(0,229,255,.55));
+      border: none;
+      color: var(--accent-text);
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      transition: transform var(--ease), filter var(--ease);
+    }
+    .btn-preview:hover { transform: translateY(-1px); filter: brightness(1.05); }
+    .btn-preview:active { transform: none; }
+    .btn-open {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 7px 4px;
+      transition: color var(--ease);
+    }
+    .btn-open:hover { color: var(--accent); }
 
-    @keyframes cardIn {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .card-thumb{
-      width:100%;
-      height:160px;
-      object-fit:cover;
-      display:block;
-      background: linear-gradient(180deg,#0b0b0b,#111);
-    }
-
-    .card-body{
-      padding:12px 14px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-
-    .card-title{
-      font-size:16px;
-      margin:0;
-      line-height:1.2;
-      font-weight:700;
-      color:var(--text);
-    }
-    .card-preview{
-      font-size:13px;
-      color:var(--muted);
-      margin:0;
-      flex:1;
-      overflow:hidden;
-      display:-webkit-box;
-      -webkit-line-clamp:3;
-      -webkit-box-orient:vertical;
-    }
-    .card-actions{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      margin-top:8px;
-    }
-    .btn-primary-modern{
-      background: linear-gradient(90deg,var(--accent), rgba(0,229,255,0.18));
-      color:#00181a;
-      border:none;
-      padding:8px 12px;
-      border-radius:10px;
-      font-weight:700;
-      box-shadow: none;
-      cursor:pointer;
-      transition: transform .14s ease;
-    }
-    .btn-primary-modern:active { transform: translateY(1px); }
-
-    .muted {
-      color:var(--muted);
-      font-size:12px;
-    }
-
-    /* loading skeleton (subtle pulse) */
-    .skeleton-grid{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:16px;
-    }
-    .skeleton{
-      height:230px;
-      border-radius:12px;
-      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.035), rgba(255,255,255,0.02));
-      animation: pulse 1.2s linear infinite;
-    }
-    @keyframes pulse {
-      0% { opacity: 0.95; }
-      50% { opacity: 0.65; }
-      100% { opacity: 0.95; }
-    }
-    @media (max-width:820px){
-      .skeleton-grid{ grid-template-columns:1fr; }
-    }
-
-    /* floating theme toggle */
-    .toggle {
-      display:flex;
-      align-items:center;
-      gap:8px;
-      background:transparent;
-      border:1px solid rgba(255,255,255,0.03);
-      padding:6px 8px;
-      border-radius:999px;
-      cursor:pointer;
-    }
-    .accent-dot {
-      width:18px;height:18px;border-radius:50%;
-      background:var(--accent);
-      box-shadow: 0 6px 18px rgba(0,229,255,0.08);
-    }
-
-    /* accessibility: focus rings */
-    .source-pill:focus, .toggle:focus, .btn-primary-modern:focus, .search-bar input:focus {
-      outline: 3px solid rgba(0,229,255,0.12);
+    /* === FOCUS RINGS === */
+    .source-pill:focus-visible,
+    .theme-btn:focus-visible,
+    .search-input:focus-visible,
+    .search-btn:focus-visible,
+    .btn-preview:focus-visible,
+    .btn-open:focus-visible,
+    dialog button:focus-visible {
+      outline: 2px solid rgba(0,229,255,.6);
       outline-offset: 2px;
     }
+    :focus:not(:focus-visible) { outline: none; }
 
-    /* small UI niceties */
-    .meta-row{ display:flex; gap:10px; align-items:center; justify-content:space-between; margin-top:6px; }
-    .small-muted { color:var(--muted); font-size:12px; }
-
-    /* modal override subtle animation */
-    .modal-content {
-      background: var(--card-bg);
-      color:var(--text);
-      border-radius:12px;
-      overflow:hidden;
-      border:none;
-      transform: translateY(6px);
-      transition: transform .18s ease, opacity .18s ease;
+    /* === DIALOG === */
+    dialog {
+      max-width: min(600px, calc(100vw - 32px));
+      width: 100%;
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0;
+      box-shadow: 0 24px 60px rgba(0,0,0,.5);
     }
-    .modal.fade .modal-dialog{
-      transform: translateY(12px);
-      transition: transform .22s ease;
+    dialog::backdrop {
+      background: rgba(0,0,0,.75);
+      backdrop-filter: blur(4px);
     }
-    .modal.show .modal-dialog{ transform: translateY(0); }
+    dialog[open] { animation: dialogIn .22s ease; }
+    @keyframes dialogIn { from { opacity: 0; transform: translateY(8px); } }
 
+    .dialog-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      background: linear-gradient(90deg, rgba(0,229,255,.08), transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .dialog-title { font-size: 15px; font-weight: 800; line-height: 1.35; }
+    .dialog-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 2px;
+      flex-shrink: 0;
+      transition: color var(--ease);
+    }
+    .dialog-close:hover { color: var(--text); }
+    .dialog-body {
+      padding: 18px;
+      font-size: 14px;
+      line-height: 1.65;
+      max-height: 55vh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    .dialog-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+    }
+    .btn-ghost {
+      padding: 8px 14px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color var(--ease), color var(--ease);
+    }
+    .btn-ghost:hover { border-color: var(--text-muted); color: var(--text); }
+    .btn-cta {
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, var(--accent), #00bcd4);
+      border: none;
+      color: var(--accent-text);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform var(--ease);
+    }
+    .btn-cta:hover { transform: translateY(-1px); }
   </style>
 </head>
 <body>
-  <div class="container container-app">
-    <div class="topbar" role="navigation" aria-label="Top bar">
-      <div class="brand" aria-hidden="false">
-        <div class="logo" aria-hidden="true">NF</div>
+  <main class="app">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true">NF</div>
         <div>
-          <h1>NewsFeed</h1>
-          <div class="small-muted">Anime & Inshorts • AMOLED</div>
+          <div class="brand-name">NewsFeed</div>
+          <div class="brand-sub">Anime &amp; Inshorts · AMOLED</div>
         </div>
       </div>
+      <button class="theme-btn" id="themeToggle"
+              aria-label="Theme: Auto">
+        <span class="theme-dot" aria-hidden="true"></span>
+        <span id="themeLabel">Auto</span>
+      </button>
+    </header>
 
-      <div class="controls" aria-hidden="false">
-        <div class="toggle" id="themeToggle" role="button" aria-label="Toggle theme" tabindex="0">
-          <div class="accent-dot" aria-hidden="true"></div>
-          <div id="themeLabel" style="font-weight:700;font-size:13px;color:var(--muted)">Auto</div>
-        </div>
-      </div>
+    <!-- Source switcher -->
+    <nav class="source-bar" aria-label="News source">
+      <button class="source-pill" id="pill-ann" aria-pressed="false">AnimeNews</button>
+      <button class="source-pill" id="pill-inshorts" aria-pressed="false">Inshorts</button>
+    </nav>
+
+    <!-- Search -->
+    <div class="search-row" role="search">
+      <input class="search-input" id="searchInput" type="search"
+             placeholder="Search news…" aria-label="Search news" autocomplete="off" />
+      <button class="search-btn" id="searchBtn" type="button">Search</button>
     </div>
 
-    <!-- source pills -->
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-      <div id="ann" class="source-pill" role="button" tabindex="0" aria-pressed="false">AnimeNews</div>
-      <div id="inshorts" class="source-pill active" role="button" tabindex="0" aria-pressed="true">Inshorts</div>
+    <!-- Feedback (announced to screen readers) -->
+    <div id="feedback" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Loading skeleton -->
+    <div id="skeleton" class="skeleton-grid" aria-hidden="true" style="display:none">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
     </div>
 
-    <!-- search -->
-    <div class="search-bar" style="margin-top:12px;">
-      <input id="searchBar" type="search" placeholder="Search news (e.g. modi, garda, anime title)" aria-label="Search news" />
-      <button id="searchButton" aria-label="Search">Search</button>
-    </div>
+    <!-- News feed -->
+    <section id="feed" aria-label="News articles" aria-live="polite" aria-busy="false"></section>
 
-    <div id="feedback" style="margin-top:10px;"></div>
+  </main>
 
-    <!-- loading skeleton placeholder -->
-    <div id="skeleton" class="skeleton-grid" style="display:none;margin-top:12px;">
-      <div class="skeleton" aria-hidden="true"></div>
-      <div class="skeleton" aria-hidden="true"></div>
-      <div class="skeleton" aria-hidden="true"></div>
-      <div class="skeleton" aria-hidden="true"></div>
-    </div>
-
-    <!-- news grid -->
-    <div id="newsFeed" style="margin-top:12px;"></div>
-  </div>
-
-  <!-- Modal (Bootstrap) -->
-  <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header" style="background:linear-gradient(90deg,var(--accent), rgba(0,229,255,0.06));">
-          <h5 id="previewLabel" class="modal-title" style="color:#00181a;font-weight:800;">Article Preview</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color:var(--text);opacity:0.9;">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body" id="modalBody" style="padding:18px; font-size:14px; color:var(--text); background:var(--card-bg);"></div>
-        <div class="modal-footer" style="border-top:none;">
-          <a id="modalReadMore" class="btn btn-primary-modern" target="_blank" rel="noopener">Read Full Article</a>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Bootstrap + jQuery -->
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" crossorigin="anonymous"></script>
+  <!-- Native dialog for article preview -->
+  <dialog id="previewDialog" aria-labelledby="dialogTitle" aria-modal="true">
+    <header class="dialog-header">
+      <h2 class="dialog-title" id="dialogTitle">Article Preview</h2>
+      <button class="dialog-close" id="dialogClose" aria-label="Close">&times;</button>
+    </header>
+    <div class="dialog-body" id="dialogBody"></div>
+    <footer class="dialog-footer">
+      <button class="btn-ghost" id="dialogCancel">Close</button>
+      <a class="btn-cta" id="dialogReadMore" href="#" target="_blank" rel="noopener noreferrer">
+        Read Full Article
+      </a>
+    </footer>
+  </dialog>
 
   <script>
-    /***********************
-     Theme handling (Option A: OS auto + toggle)
-    ************************/
-    (function(){
-      const root = document.documentElement;
-      const toggle = document.getElementById('themeToggle');
-      const label = document.getElementById('themeLabel');
+    'use strict';
 
-      // read saved preference
-      const saved = localStorage.getItem('nf-theme'); // values: 'auto' | 'dark' | 'light'
-      function applyTheme(mode){
-        if(!mode || mode === 'auto'){
-          root.removeAttribute('data-theme');
-          label.textContent = 'Auto';
-          toggle.setAttribute('aria-pressed','false');
-        } else if(mode === 'dark'){
-          root.setAttribute('data-theme','dark');
-          label.textContent = 'Dark';
-          toggle.setAttribute('aria-pressed','true');
-        } else {
-          root.setAttribute('data-theme','light');
-          label.textContent = 'Light';
-          toggle.setAttribute('aria-pressed','true');
-        }
+    /* ====================================================================
+       THEME
+    ==================================================================== */
+    (() => {
+      const root   = document.documentElement;
+      const btn    = document.getElementById('themeToggle');
+      const label  = document.getElementById('themeLabel');
+      const MODES  = ['auto', 'dark', 'light'];
+      const STORE  = 'nf-theme';
+
+      function apply(mode) {
+        if (mode === 'dark')       root.setAttribute('data-theme', 'dark');
+        else if (mode === 'light') root.setAttribute('data-theme', 'light');
+        else                       root.removeAttribute('data-theme');
+        const display = mode.charAt(0).toUpperCase() + mode.slice(1);
+        label.textContent  = display;
+        btn.setAttribute('aria-label', 'Theme: ' + display);
       }
 
-      // cycle: auto -> dark -> light -> auto ...
-      function nextMode(current){
-        if(current === 'auto') return 'dark';
-        if(current === 'dark') return 'light';
-        return 'auto';
-      }
+      let mode = localStorage.getItem(STORE) || 'auto';
+      apply(mode);
 
-      let mode = saved || 'auto';
-      applyTheme(mode);
-
-      toggle.addEventListener('click', () => {
-        mode = nextMode(mode);
-        applyTheme(mode);
-        localStorage.setItem('nf-theme', mode);
-      });
-      toggle.addEventListener('keydown', (e) => {
-        if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle.click(); }
+      btn.addEventListener('click', () => {
+        mode = MODES[(MODES.indexOf(mode) + 1) % MODES.length];
+        apply(mode);
+        localStorage.setItem(STORE, mode);
       });
     })();
 
-    /***********************
-     API URLs & helpers
-    ************************/
-    const URLs = {
-      ann: "https://aninews.vercel.app/api/news",                    // anime news new API
-      inshorts: "https://inshorts.vercel.app/news/top?offset=0&limit=10",
-      search: (q) => `https://inshorts.vercel.app/news/search?query=${encodeURIComponent(q)}&offset=0&limit=10`
+    /* ====================================================================
+       API CONFIG
+    ==================================================================== */
+    const API = {
+      ann:      'https://aninews.vercel.app/api/news',
+      inshorts: 'https://inshorts.vercel.app/news/top?offset=0&limit=10',
+      search:   q => `https://inshorts.vercel.app/news/search?query=${encodeURIComponent(q)}&offset=0&limit=10`,
     };
 
-    const newsFeed = document.getElementById('newsFeed');
-    const skeleton = document.getElementById('skeleton');
-    const feedback = document.getElementById('feedback');
-    const searchInput = document.getElementById('searchBar');
-
-    // small utility to format date in local string
-    function fmtDate(iso){
-      try { return new Date(iso).toLocaleString(); } catch(e){ return ''; }
+    /* ====================================================================
+       UTILITIES
+    ==================================================================== */
+    function fmtDate(iso) {
+      try {
+        return new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+      } catch (_) { return ''; }
     }
 
-    // show skeleton
-    function showSkeleton(on=true){
-      skeleton.style.display = on ? 'grid' : 'none';
+    // Inline SVG placeholder — no third-party image service needed
+    const PLACEHOLDER = 'data:image/svg+xml,' + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="340">' +
+      '<rect width="600" height="340" fill="#111"/>' +
+      '<text x="300" y="170" dominant-baseline="middle" text-anchor="middle" ' +
+      'font-family="sans-serif" font-size="14" fill="#555">No Image</text></svg>'
+    );
+
+    function getSafeArticleUrl(url) {
+      if (typeof url !== 'string' || !url.trim()) return null;
+      try {
+        const parsed = new URL(url, window.location.href);
+        return (parsed.protocol === 'http:' || parsed.protocol === 'https:') ? parsed.href : null;
+      } catch (_) { return null; }
     }
 
-    function showFeedback(text='', type='error'){
-      feedback.innerHTML = '';
-      if(!text) return;
+    /* ====================================================================
+       FEEDBACK & SKELETON
+    ==================================================================== */
+    const $feedback = document.getElementById('feedback');
+    const $skeleton = document.getElementById('skeleton');
+    const $feed     = document.getElementById('feed');
+
+    function showFeedback(text = '', type = 'error') {
+      $feedback.innerHTML = '';
+      if (!text) return;
       const div = document.createElement('div');
-      div.className = type === 'error' ? 'alert alert-danger' : 'alert alert-info';
+      div.className = `alert alert-${type} visible`;
       div.textContent = text;
-      feedback.appendChild(div);
+      $feedback.appendChild(div);
     }
 
-    // render one card
-    function createCard(item, source){
-      const card = document.createElement('article');
-      card.className = 'card-news';
-      // subtle stagger animation delay
-      const delay = (Math.random() * 120) | 0;
-      card.style.animationDelay = (delay/1000) + 's';
+    function showSkeleton(on) {
+      $skeleton.style.display = on ? 'grid' : 'none';
+      $feed.setAttribute('aria-busy', on ? 'true' : 'false');
+    }
 
-      // map fields per source
-      let img = '', title = '', preview = '', full = '', link = '', meta = '';
-      if(source === 'ann'){
-        img = item.image || ('https://via.placeholder.com/600x400?text=No+Image');
-        title = item.title || '';
-        preview = item.excerpt || '';
-        full = item.excerpt || '';
-        link = item.link || '';
-        meta = item.date ? fmtDate(item.date) : (item.source || '');
+    /* ====================================================================
+       CARD FACTORY
+    ==================================================================== */
+    function mapArticle(raw, source) {
+      if (source === 'ann') {
+        return {
+          img:     raw.image    || '',
+          title:   raw.title    || '',
+          excerpt: raw.excerpt  || '',
+          full:    raw.excerpt  || '',
+          link:    raw.link     || '',
+          meta:    raw.date ? fmtDate(raw.date) : (raw.source || ''),
+        };
+      }
+      return {
+        img:     raw.imageUrl  || '',
+        title:   raw.title     || '',
+        excerpt: raw.subtitle  || raw.content || '',
+        full:    raw.content   || raw.subtitle || '',
+        link:    raw.sourceUrl || '',
+        meta:    [raw.sourceName, raw.createdAt ? fmtDate(raw.createdAt) : '']
+                   .filter(Boolean).join(' · '),
+      };
+    }
+
+    function createCard(raw, source, index) {
+      const a    = mapArticle(raw, source);
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.style.animationDelay = `${index * 45}ms`;
+
+      // Image
+      const img = document.createElement('img');
+      img.className = 'card-img';
+      img.src       = a.img || PLACEHOLDER;
+      img.alt       = a.title;
+      img.loading   = 'lazy';
+      img.decoding  = 'async';
+      img.addEventListener('error', () => { img.src = PLACEHOLDER; img.alt = ''; });
+
+      // Body
+      const body = document.createElement('div');
+      body.className = 'card-body';
+
+      const titleEl = document.createElement('h3');
+      titleEl.className   = 'card-title';
+      titleEl.textContent = a.title;
+
+      const excerptEl = document.createElement('p');
+      excerptEl.className   = 'card-excerpt';
+      excerptEl.textContent = a.excerpt;
+
+      // Footer
+      const footer = document.createElement('div');
+      footer.className = 'card-footer';
+
+      const metaEl = document.createElement('span');
+      metaEl.className   = 'card-meta';
+      metaEl.textContent = a.meta;
+
+      const actions = document.createElement('div');
+      actions.className = 'card-actions';
+
+      const previewBtn = document.createElement('button');
+      previewBtn.className   = 'btn-preview';
+      previewBtn.type        = 'button';
+      previewBtn.textContent = 'Preview';
+      previewBtn.addEventListener('click', () => openDialog(a.full, a.link, a.title));
+
+      const openLink = document.createElement('a');
+      openLink.className   = 'btn-open';
+      openLink.textContent = 'Open ↗';
+      openLink.target      = '_blank';
+      openLink.rel         = 'noopener noreferrer';
+      const safeCardUrl = getSafeArticleUrl(a.link);
+      if (safeCardUrl) {
+        openLink.href = safeCardUrl;
       } else {
-        img = item.imageUrl || ('https://via.placeholder.com/600x400?text=No+Image');
-        title = item.title || '';
-        preview = item.subtitle || item.content || '';
-        full = item.content || item.subtitle || '';
-        link = item.sourceUrl || '';
-        meta = (item.sourceName || '') + (item.createdAt ? (' • ' + new Date(item.createdAt).toLocaleString()) : '');
+        openLink.removeAttribute('href');
+        openLink.setAttribute('aria-disabled', 'true');
+        openLink.style.opacity = '0.4';
+        openLink.style.cursor  = 'default';
       }
 
-      card.innerHTML = `
-        <img class="card-thumb" src="${img}" alt="${escapeHtml(title)}" loading="lazy" />
-        <div class="card-body">
-          <h3 class="card-title">${escapeHtml(title)}</h3>
-          <p class="card-preview">${escapeHtml(preview)}</p>
-          <div class="meta-row">
-            <div class="muted">${escapeHtml(meta)}</div>
-            <div class="card-actions">
-              <button class="btn-primary-modern" type="button">Preview</button>
-              <a class="small-muted" href="${link || '#'}" target="_blank" rel="noopener">Open</a>
-            </div>
-          </div>
-        </div>
-      `;
-      // preview button open modal
-      const btn = card.querySelector('.btn-primary-modern');
-      btn.addEventListener('click', () => openPreview(full, link, title));
+      actions.append(previewBtn, openLink);
+      footer.append(metaEl, actions);
+      body.append(titleEl, excerptEl, footer);
+      card.append(img, body);
       return card;
     }
 
-    // sanitize basic injection (we only use textContent in modal, but alt/title come from API)
-    function escapeHtml(str=''){
-      return String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+    /* ====================================================================
+       DIALOG  (native <dialog> — no library needed)
+    ==================================================================== */
+    const dialog         = document.getElementById('previewDialog');
+    const dialogBody     = document.getElementById('dialogBody');
+    const dialogReadMore = document.getElementById('dialogReadMore');
+    const dialogTitle    = document.getElementById('dialogTitle');
+
+    function openDialog(text, url, title = '') {
+      const safeUrl = getSafeArticleUrl(url);
+
+      dialogTitle.textContent = title || 'Article Preview';
+      dialogBody.textContent  = text  || 'No preview available.';
+
+      if (safeUrl) {
+        dialogReadMore.href = safeUrl;
+        dialogReadMore.hidden = false;
+        dialogReadMore.removeAttribute('aria-disabled');
+      } else {
+        dialogReadMore.removeAttribute('href');
+        dialogReadMore.hidden = true;
+        dialogReadMore.setAttribute('aria-disabled', 'true');
+      }
+
+      dialog.showModal();
     }
 
-    // open modal with preview text + link
-    function openPreview(text, url, title=''){
-      const modalBody = document.getElementById('modalBody');
-      const modalReadMore = document.getElementById('modalReadMore');
-      modalBody.textContent = text || 'No preview available.';
-      modalReadMore.href = url || '#';
-      // set modal title accessible
-      document.getElementById('previewLabel').textContent = title || 'Article Preview';
-      // show bootstrap modal
-      $('#previewModal').modal('show');
-    }
+    function closeDialog() { dialog.close(); }
 
-    // main fetch routine
-    async function fetchNews(url, source){
-      newsFeed.innerHTML = '';
+    document.getElementById('dialogClose').addEventListener('click',  closeDialog);
+    document.getElementById('dialogCancel').addEventListener('click', closeDialog);
+    // Close on backdrop click
+    dialog.addEventListener('click', e => { if (e.target === dialog) closeDialog(); });
+    // Escape key is handled natively by <dialog>
+
+    /* ====================================================================
+       FETCH & RENDER
+    ==================================================================== */
+    async function loadFeed(url, source) {
+      $feed.innerHTML = '';
       showFeedback('');
       showSkeleton(true);
 
       try {
-        const res = await fetch(url, {cache: 'no-store'});
-        if(!res.ok) throw new Error('Network response not ok ' + res.status);
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
 
-        // map articles based on source
         let articles = [];
-        if(source === 'ann'){
-          // aninews returns { success:true, data: [...] }
+        if (source === 'ann') {
+          // aninews: { success: true, data: [...] }
           articles = Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : []);
         } else {
-          // inshorts (top) returns { data: { count, articles: [...] } }
-          articles = data?.data?.articles || [];
+          // inshorts: { data: { articles: [...] } }
+          articles = data?.data?.articles ?? [];
         }
 
-        if(!articles.length){
-          showFeedback('No articles returned for this query.', 'info');
-          newsFeed.innerHTML = '';
-          showSkeleton(false);
+        if (!articles.length) {
+          showFeedback('No articles found for this query.', 'info');
           return;
         }
 
-        // append cards
         const frag = document.createDocumentFragment();
-        articles.forEach(a => frag.appendChild(createCard(a, source)));
-        newsFeed.appendChild(frag);
-      } catch(err){
-        console.error(err);
-        showFeedback('Failed to load news — try again.', 'error');
+        articles.forEach((a, i) => frag.appendChild(createCard(a, source, i)));
+        $feed.appendChild(frag);
+      } catch (err) {
+        console.error('[NewsFeed]', err);
+        showFeedback('Failed to load news — please try again.', 'error');
       } finally {
         showSkeleton(false);
       }
     }
 
-    // UI control wiring
-    document.getElementById('ann').addEventListener('click', () => {
-      setActivePill('ann');
-      fetchNews(URLs.ann, 'ann');
-    });
-    document.getElementById('inshorts').addEventListener('click', () => {
-      setActivePill('inshorts');
-      fetchNews(URLs.inshorts, 'inshorts');
-    });
-
-    // make pills keyboard accessible
-    function setActivePill(id){
+    /* ====================================================================
+       SOURCE PILLS
+    ==================================================================== */
+    function setActivePill(id) {
       document.querySelectorAll('.source-pill').forEach(p => {
-        p.classList.toggle('active', p.id === id);
         p.setAttribute('aria-pressed', p.id === id ? 'true' : 'false');
       });
     }
-    document.querySelectorAll('.source-pill').forEach(el=>{
-      el.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' ') el.click(); });
+
+    document.getElementById('pill-ann').addEventListener('click', () => {
+      setActivePill('pill-ann');
+      loadFeed(API.ann, 'ann');
     });
 
-    // search
-    document.getElementById('searchButton').addEventListener('click', () => {
-      const q = searchInput.value.trim();
-      if(!q) return;
-      // deselect pills visually
-      document.querySelectorAll('.source-pill').forEach(p=>p.classList.remove('active'));
-      fetchNews(URLs.search(q), 'inshorts');
+    document.getElementById('pill-inshorts').addEventListener('click', () => {
+      setActivePill('pill-inshorts');
+      loadFeed(API.inshorts, 'inshorts');
     });
-    searchInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') document.getElementById('searchButton').click(); });
 
-    // initial load (inshorts)
-    (function init(){
-      setActivePill('inshorts');
-      fetchNews(URLs.inshorts,'inshorts');
-      // show skeleton placeholders while loading
-      showSkeleton(true);
-    })();
+    /* ====================================================================
+       SEARCH
+    ==================================================================== */
+    const $searchInput = document.getElementById('searchInput');
 
+    function runSearch() {
+      const q = $searchInput.value.trim();
+      if (!q) return;
+      setActivePill('');   // deselect all pills during search
+      loadFeed(API.search(q), 'inshorts');
+    }
+
+    document.getElementById('searchBtn').addEventListener('click', runSearch);
+    $searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') runSearch(); });
+
+    /* ====================================================================
+       INIT
+    ==================================================================== */
+    setActivePill('pill-inshorts');
+    loadFeed(API.inshorts, 'inshorts');
   </script>
 </body>
 </html>
